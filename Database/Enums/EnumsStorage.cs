@@ -29,21 +29,21 @@ public static class EnumsStorage
             { ")", SeparatorType.RightParenthesis },
         };
 
-    public static readonly Dictionary<string, KeywordType> KeywordToTokenMap =
-        new Dictionary<string, KeywordType>()
+    public static readonly Dictionary<string, Keyword> KeywordToTokenMap =
+        new Dictionary<string, Keyword>()
         {
-            { "SELECT", KeywordType.Select },
-            { "INSERT", KeywordType.Insert },
-            { "UPDATE", KeywordType.Update },
-            { "DELETE", KeywordType.Delete },
-            { "CREATE", KeywordType.Create },
-            { "TABLE", KeywordType.Table },
-            { "INTO", KeywordType.Into },
-            { "SET", KeywordType.Set },
-            { "FROM", KeywordType.From },
-            { "VALUES", KeywordType.Values },
-            { "*", KeywordType.Asterisk },
-            { "WHERE", KeywordType.Where },
+            { "SELECT", Keyword.Select },
+            { "INSERT", Keyword.Insert },
+            { "UPDATE", Keyword.Update },
+            { "DELETE", Keyword.Delete },
+            { "CREATE", Keyword.Create },
+            { "TABLE", Keyword.Table },
+            { "INTO", Keyword.Into },
+            { "SET", Keyword.Set },
+            { "FROM", Keyword.From },
+            { "VALUES", Keyword.Values },
+            { "*", Keyword.Asterisk },
+            { "WHERE", Keyword.Where },
         };
 
     public static readonly Dictionary<string, OperatorType> OperatorToTokenMap =
@@ -94,7 +94,7 @@ public static class EnumsStorage
         };
     }
 
-    public static KeywordType GetKeywordType(string lexeme)
+    public static Keyword GetKeyword(string lexeme)
     {
         return KeywordToTokenMap[lexeme];
     }
@@ -121,7 +121,7 @@ public static class EnumsStorage
                throw new ArgumentOutOfRangeException(nameof(type), type, null);
     }
 
-    public static string GetKeywordString(KeywordType type)
+    public static string GetKeywordString(Keyword type)
     {
         return KeywordToTokenMap.FirstOrDefault(kvp => kvp.Value == type).Key ??
                throw new ArgumentOutOfRangeException(nameof(type), type, null);

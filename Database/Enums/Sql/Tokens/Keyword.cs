@@ -1,6 +1,6 @@
 namespace Enums.Sql.Tokens;
 
-public enum KeywordType
+public enum Keyword
 {
     Select = 1,
     Insert,
