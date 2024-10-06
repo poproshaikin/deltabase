@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Db\Db.Core\Db.Core.csproj" />
       <ProjectReference Include="..\..\Enums\Enums.csproj" />
       <ProjectReference Include="..\Server.Tcp\Server.Tcp.csproj" />
     </ItemGroup>
