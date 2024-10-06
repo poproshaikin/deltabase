@@ -9,6 +9,9 @@ Database/Db/Db.Core/obj
 Database/Db/Db.Records/bin
 Database/Db/Db.Records/obj
 
+Database/Db/Sql/bin
+Database/Db/Sql/obj
+
 Database/Enums/bin
 Database/Enums/obj
 
@@ -20,3 +23,6 @@ Database/Server/Server.Tcp/obj
 
 Database/Server/Server.Core/bin
 Database/Server/Server.Core/obj
+
+Database/EntryPoint/bin
+Database/EntryPoint/obj
