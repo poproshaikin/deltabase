@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Utils\Utils.csproj" />
       <ProjectReference Include="..\Db.Records\Db.Records.csproj" />
+      <ProjectReference Include="..\Sql\Sql.csproj" />
     </ItemGroup>
 
 </Project>
