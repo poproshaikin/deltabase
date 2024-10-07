@@ -161,10 +161,10 @@ public class Record
     
     public RecordRow[] GetColumns(string[] names)
     {
-        List<int> columnsIndexes = names.Select(columnName => 
+        int[] columnsIndexes = names.Select(columnName => 
             Array.IndexOf(Columns, 
-                Columns.FirstOrDefault(c => c.Name == columnName))
-            ).ToList();
+                Columns.FirstOrDefault(c => c.Name == columnName)))
+            .ToArray();
 
         return Rows.Select(r => new RecordRow(r[columnsIndexes])).ToArray();
     }

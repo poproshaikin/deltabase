@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Exceptions;
 
@@ -20,19 +21,19 @@ public static class ThrowHelper
     private static InvalidSyntaxException UnexpectedToken(string? token) =>
         InvalidSyntaxException.UnexpectedToken(token);
 
-    [DoesNotReturn]
+    [DoesNotReturn, StackTraceHidden]
     public static void ThrowRecordNotFound(string recordName) => 
         throw RecordNotFound(recordName);
 
-    [DoesNotReturn]
+    [DoesNotReturn, StackTraceHidden]
     public static void ThrowUnknownCommand() => 
         throw UnknownCommand();
 
-    [DoesNotReturn]
+    [DoesNotReturn, StackTraceHidden]
     public static void ThrowInvalidSql(params string[] literal) =>
         throw InvalidSql(literal);
 
-    [DoesNotReturn]
+    [DoesNotReturn, StackTraceHidden]
     public static void ThrowUnexpectedToken(string? token) =>
         throw UnexpectedToken(token);
 }

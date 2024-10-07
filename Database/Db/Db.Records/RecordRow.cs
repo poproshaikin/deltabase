@@ -43,26 +43,3 @@ public class RecordRow
 
     public override string ToString() => string.Join("■ ", Values);
 }
-
-file static class ArrayExtensions
-{
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="items"></param>
-    /// <param name="searched"></param>
-    /// <returns></returns>
-    /// <exception cref="InvalidDataException"></exception>
-    public static int IndexOf(this string[] items, string? searched)
-    {
-        for (int i = 0; i < items.Length; i++)
-        {
-            if (items[i] == searched)
-            {
-                return i;
-            }
-        }
-
-        throw new InvalidDataException("Given item wasn't found in the collection");
-    }
-}

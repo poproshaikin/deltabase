@@ -81,11 +81,11 @@ public class QueryParser
         
         SqlExpression[] expressions =
         [
-            new SelectExpression(tokens[selectIndex + 1]),
+            new SelectExpression(tokens[(selectIndex + 1)..fromIndex]),
             new FromExpression(tokens[fromIndex + 1])
         ];
-
-        if (whereIndex != 1)
+        
+        if (whereIndex != -1)
         {
             throw new NotImplementedException();
         }

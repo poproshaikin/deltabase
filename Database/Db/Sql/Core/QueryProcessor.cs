@@ -1,3 +1,4 @@
+using Sql.Core.Evaluating;
 using Sql.Queries;
 using Utils;
 
@@ -14,10 +15,10 @@ public class QueryProcessor
         _dbName = dbName;
     }
 
-    public byte[] ExecuteDql(SqlQuery query)
+    public byte[] ExecuteDql(DqlQuery query)
     {
-        QueryEvaluator evaluator = new();
-        
+        DqlEvaluator evaluator = new(fsManager: _fs, _dbName);
+        return evaluator.Evaluate(query).ToBytes();
     }
     
     public byte[] ExecuteDml(DmlQuery query)

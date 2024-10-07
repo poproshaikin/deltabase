@@ -1,4 +1,5 @@
 using Db.Records;
+using Enums.Sql.Queries;
 using Enums.Tcp;
 using Sql;
 using Sql.Core;
@@ -19,6 +20,7 @@ public class DltDatabase
     {
         _fs = fs;
         _qp = new QueryProcessor(_fs, dbName);
+        _parser = new QueryParser();
         Name = dbName;
     }
 
@@ -28,16 +30,13 @@ public class DltDatabase
         return ExecuteQuery(command);
     }
     
-    private byte[] ExecuteQuery(SqlQuery command)
+    private byte[] ExecuteQuery(SqlQuery query)
     {
         try
         {
-            return command switch
+            return query.Type switch
             {
-                SelectQuery select => ExecuteReader(select),
-                InsertQuery insert => ExecuteInsert(insert),
-                UpdateQuery update => ExecuteUpdate(update),
-                DeleteQuery delete => ExecuteDelete(delete),
+                QueryType.Select => _qp.ExecuteDql((DqlQuery)query),
 
                 _ => throw new NotImplementedException()
             };
