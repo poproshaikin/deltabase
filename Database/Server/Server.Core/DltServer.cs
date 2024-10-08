@@ -5,6 +5,9 @@ using Utils;
 
 namespace Server.Core;
 
+/// <summary>
+/// Represents a server that listens for client connections and processes their requests.
+/// </summary>
 public class DltServer
 {
     private const int connected_clients_limit = 10;
@@ -23,6 +26,10 @@ public class DltServer
     private const string DATABASE_NULL_MESSAGE = "database name was null";
     private const string UNAUTHORIZED_MESSAGE = "unauthorized";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DltServer"/> class.
+    /// </summary>
+    /// <param name="cnnConfig">The connection configuration for the server.</param>
     public DltServer(DltConnectionConfig cnnConfig)
     {
         _serverName = cnnConfig.Server;
@@ -33,8 +40,11 @@ public class DltServer
         _clients = new Dictionary<DltClient, DltDatabase>();
     }
 
+    /// <summary>
+    /// Starts the server and begins listening for client connections.
+    /// </summary>
     public void Start()
-    {
+    {                           
         _listener.Start();
         Logger.LogHeader("Server started successfully");
         
@@ -46,6 +56,10 @@ public class DltServer
         }
     }
 
+    /// <summary>
+    /// Processes a client connection asynchronously.
+    /// </summary>
+    /// <param name="client">The client to process.</param>
     private async void ProcessClientAsync(DltClient client)
     {
         await _semaphore.WaitAsync(); 
@@ -64,6 +78,12 @@ public class DltServer
         Logger.Log($"Connection with host {client.TcpClient.Client.RemoteEndPoint} lost");
     }
 
+    /// <summary>
+    /// Processes a request from a client asynchronously.
+    /// </summary>
+    /// <param name="client">The client that sent the request.</param>
+    /// <param name="handler">The handler managing the client's TCP connection.</param>
+    /// <param name="request">The request received from the client.</param>
     private async void ProcessRequestAsync(DltClient client, DltTcpHandler handler, TcpRequest request)
     {
         Logger.Log($"request received: \"{request.Message}\"");
@@ -109,12 +129,22 @@ public class DltServer
         }
     }
 
+    /// <summary>
+    /// Initializes a new <see cref="DltServer"/> using the provided connection string.
+    /// </summary>
+    /// <param name="connectionString">The connection string for the server configuration.</param>
+    /// <returns>A new instance of the <see cref="DltServer"/> class.</returns>
     public static DltServer Init(string connectionString)
     {
         var connectionConfig = DltConnectionConfig.Parse(connectionString);
         return new DltServer(connectionConfig);
     }
-
+        
+    /// <summary>
+    /// Verifies if the request matches the server's connection configuration.
+    /// </summary>
+    /// <param name="request">The request to verify.</param>
+    /// <returns><c>true</c> if the request is authorized; otherwise, <c>false</c>.</returns>
     private bool VerifyRequest(TcpRequest request)
     {
         return request.GetConnectionConfig() == _connectionConfig;

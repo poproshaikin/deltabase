@@ -1,28 +1,29 @@
-using System.Runtime.InteropServices.ComTypes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Enums;
-using Enums.Sql.Queries;
 using Enums.Sql.Tokens;
-using Sql.Queries;
-using Sql.Tokens;
-using Sql;
+using Exceptions;
+using Sql.Common.Queries;
 using Sql.Expressions;
-using Utils;
+using Sql.Tokens;
 
 namespace Sql.Core;
 
 public class QueryParser
 {
-    public SqlQuery ParseQuery(string query)
+    public SqlQuery Parse(string sql)
     {
-        SqlToken[] tokens = ToTokens(query);
+        SqlToken[] tokens = ToTokens(sql);
         return ToQuery(tokens);
     }
-    
-    private SqlToken[] ToTokens(string query)
+
+    private SqlToken[] ToTokens(string sql)
     {
         List<SqlToken> tokenList = new();
         
-        string[] lexems = query.Split(' ', ',', '(', ')');
+        string[] lexems = sql.Split(SeparatorType.Whitespace, SeparatorType.Comma, SeparatorType.LeftParenthesis,
+            SeparatorType.RightParenthesis);
 
         foreach (string lexeme in lexems)
         {
@@ -34,7 +35,7 @@ public class QueryParser
             }
             else
             {
-                tokenList.Add(ToLiteral(lexeme));
+                tokenList.Add(ParseLiteral(lexeme));
             }
         }
 
@@ -43,66 +44,127 @@ public class QueryParser
 
     private SqlQuery ToQuery(SqlToken[] tokens)
     {
-        if (tokens[0].Type != TokenType.Keyword)
+        return tokens[0] switch
         {
-            throw ThrowHelper.UnknownCommand();
-        }
+            { } t when t.IsKeyword(Keyword.Select) => ParseQuery<SelectQuery>(tokens),
+            { } t when t.IsKeyword(Keyword.Insert) => ParseQuery<InsertQuery>(tokens),
+            { } t when t.IsKeyword(Keyword.Update) => ParseQuery<UpdateQuery>(tokens),
+            { } t when t.IsKeyword(Keyword.Delete) => ParseQuery<DeleteQuery>(tokens),
 
-        Keyword kw = EnumsStorage.GetKeyword(tokens[0]);
-        return kw switch
-        {
-            Keyword.Select => ParseDqlQuery(tokens),
-            
             _ => throw new NotImplementedException()
         };
     }
 
-    private SqlToken ToLiteral(string lexeme)
-    {
-        if (lexeme[0] == '\'' && lexeme[^1] == '\'')
-        {
-            return new SqlToken(TokenType.StringLiteral, lexeme[1..^1]);
-        }
-        else if (lexeme.IsNumeric())
-        {
-            return new SqlToken(TokenType.NumberLiteral, lexeme);
-        }
-        else
-        {
-            return new SqlToken(TokenType.Identifier, lexeme);
-        }
-    }
-
-    private DqlQuery ParseDqlQuery(SqlToken[] tokens)
+    private static SqlQuery ParseQuery<TQuery>(SqlToken[] tokens) where TQuery : SqlQuery
     {
         int selectIndex = tokens.IndexOf(Keyword.Select);
         int fromIndex = tokens.IndexOf(Keyword.From);
+        int intoIndex = tokens.IndexOf(Keyword.Into);
+        int valuesIndex = tokens.IndexOf(Keyword.Values);
+        int updateIndex = tokens.IndexOf(Keyword.Update);
+        int setIndex = tokens.IndexOf(Keyword.Set);
         int whereIndex = tokens.IndexOf(Keyword.Where);
+        int deleteIndex = tokens.IndexOf(Keyword.Delete);
         
-        List<SqlExpression> expressions =
-        [
-            new SelectExpression(tokens[(selectIndex + 1)..fromIndex]),
-            new FromExpression(tokens[fromIndex + 1])
-        ];
-        
-        if (whereIndex != -1)
+        return typeof(TQuery) switch
         {
-            expressions.AddRange(ParseConditions(tokens[(whereIndex + 1)..]));
-        }
+            { } t when t == typeof(SelectQuery) => new SelectQuery(tokens)
+            {
+                SelectAllColumns = tokens[selectIndex + 1].IsOperator(OperatorType.Asterisk),
+                PassedColumns = tokens[(selectIndex + 1)..fromIndex],
+                TableName = tokens[fromIndex + 1],
+                Condition = whereIndex is not -1 ? ParseConditionGroup(tokens[(whereIndex + 1)..]) : null
+            },
 
-        return new DqlQuery(expressions, QueryType.Select);
+            { } t when t == typeof(InsertQuery) => new InsertQuery(tokens)
+            {
+                TableName = tokens[intoIndex + 1],
+                PassedColumns = tokens[(intoIndex + 2)..valuesIndex],
+                PassedValues = tokens[(valuesIndex + 1)..]
+            },
+
+            { } t when t == typeof(UpdateQuery) => new UpdateQuery(tokens)
+            {
+                TableName = tokens[updateIndex + 1],
+                Assignments = ParseAssignExpression(tokens[(setIndex + 1)..whereIndex]),
+                Condition = whereIndex != -1 ? ParseConditionGroup(tokens[(whereIndex + 1)..]) : null,
+            },
+            
+            { } t when t == typeof(DeleteQuery) => new DeleteQuery(tokens)
+            {
+                TableName = tokens[fromIndex + 1],
+                PassedColumns = tokens[(deleteIndex + 1)..fromIndex],
+                SelectAllColumns = tokens[deleteIndex + 1].IsOperator(OperatorType.Asterisk),
+                Condition = whereIndex != -1 ? ParseConditionGroup(tokens[(whereIndex + 1)..]) : null,
+            },
+            
+            { } t when t == typeof(CreateTableQuery) => new CreateTableQuery(tokens)
+            {
+                
+            },
+
+            _ => throw new NotImplementedException(),
+        };
     }
 
-    private ConditionExpression[] ParseConditions(SqlToken[] conditionTokens)
+    private static AssignExpr[] ParseAssignExpression(SqlToken[] tokens)
     {
+        const int expression_length = 3;
+        const int operator_position = 1;
+
+        int assignmentsCount = tokens.Count(tkn => tkn.IsOperator(OperatorType.Assign));
+
+        if (assignmentsCount == 1) // "Identifier1" = "Value1"
+        {
+            return new[]
+            {
+                new AssignExpr(tokens)
+                {
+                    LeftOperand = tokens[0],
+                    RightOperand = tokens[^1],
+                }
+            };
+        }
+        else // "Identifier1" = "Value1", "Identifier2" = "Value2", ...
+        {
+            List<AssignExpr> assignments = new();
+            int lastPosition = 0;
+            for (int i = 0; i < assignmentsCount; i++)
+            {
+                List<SqlToken> operands = new();
+                for (int j = 0; j < expression_length; j++)
+                {
+                    lastPosition++;
+                    if (j == operator_position)
+                        continue;
+                    operands.Add(tokens[lastPosition]);
+                }
+                assignments.Add(new AssignExpr(operands)
+                {
+                    LeftOperand = operands[0],
+                    RightOperand = operands[^1],
+                });
+            }
+
+            return assignments.ToArray();
+        }
+    }
+
+    private static ConditionGroup? ParseConditionGroup(SqlToken[]? conditionTokens)
+    {
+        if (conditionTokens is null)
+            return null;
+
         if (conditionTokens.Length == 3)
         {
-            return [new ConditionExpression(conditionTokens[0], conditionTokens[1], conditionTokens[2])];
+            return new ConditionGroup(
+                subconditions: new [] { new ConditionExpr(conditionTokens) }, 
+                logicalOperators: Array.Empty<SqlToken>());
         }
-        
-        List<ConditionExpression> conditions = [];
-        List<SqlToken> oneConditionTokens = [];
-        List<SqlToken> logicalOperators = [];
+
+        List<ConditionExpr> conditions = new();
+        List<SqlToken> oneConditionTokens = new();
+        List<SqlToken> logicalOperators = new();
 
         for (int i = 0; i < conditionTokens.Length; i++)
         {
@@ -110,22 +172,50 @@ public class QueryParser
 
             if (conditionTokens[i].IsOperator(OperatorType.LogicalOperator))
             {
-                conditions.Add(parseCondition(oneConditionTokens));
+                conditions.Add(new ConditionExpr(oneConditionTokens));
                 oneConditionTokens.Clear();
                 logicalOperators.Add(conditionTokens[i]);
             }
             else if (i == conditionTokens.Length - 1)
             {
-                conditions.Add(parseCondition(oneConditionTokens));
+                conditions.Add(new ConditionExpr(oneConditionTokens));
             }
         }
 
-        return conditions.ToArray();
-
-        ConditionExpression parseCondition(IReadOnlyList<SqlToken> tokens) =>
-            new(
-                tokens[0],
-                tokens[2],
-                tokens[1]);
+        return new ConditionGroup(conditions, logicalOperators);
     }
+
+    private SqlToken ParseLiteral(string literal)
+    {
+        if (literal[0] == '\'' && literal[^1] == '\'')
+        {
+            return new SqlToken(TokenType.StringLiteral, literal[1..^1]);
+        }
+        else if (literal[0].IsNumeric())
+        {
+            return new SqlToken(TokenType.NumberLiteral, literal);
+        }
+        else
+        {
+            return new SqlToken(TokenType.Identifier, literal);
+        }
+    }
+}
+
+internal static partial class SqlCoreExtensions
+{
+    public static string[] Split(this string s, params SeparatorType[] types)
+    {
+        string[] separators = types.Select(EnumsStorage.GetSeparatorString).ToArray();
+        return s.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    public static bool IsNumeric(this char c) => "0123456789.".Contains(c);
+
+    public static int IndexOf(this SqlToken[] tokens, SqlToken? token) => Array.IndexOf(tokens, token);
+
+    public static int IndexOf(this SqlToken[] tokens, Keyword kw) =>
+        tokens.IndexOf(tokens.FirstOrDefault(t => t.IsKeyword(kw)));
+    
+    public static string[] TokenValuesToArray(this SqlToken[] tokens) => tokens.Select(t => t.Value).ToArray(); 
 }
