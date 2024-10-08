@@ -79,7 +79,7 @@ public class QueryParser
         int fromIndex = tokens.IndexOf(Keyword.From);
         int whereIndex = tokens.IndexOf(Keyword.Where);
         
-        SqlExpression[] expressions =
+        List<SqlExpression> expressions =
         [
             new SelectExpression(tokens[(selectIndex + 1)..fromIndex]),
             new FromExpression(tokens[fromIndex + 1])
@@ -87,9 +87,45 @@ public class QueryParser
         
         if (whereIndex != -1)
         {
-            throw new NotImplementedException();
+            expressions.AddRange(ParseConditions(tokens[(whereIndex + 1)..]));
         }
 
         return new DqlQuery(expressions, QueryType.Select);
+    }
+
+    private ConditionExpression[] ParseConditions(SqlToken[] conditionTokens)
+    {
+        if (conditionTokens.Length == 3)
+        {
+            return [new ConditionExpression(conditionTokens[0], conditionTokens[1], conditionTokens[2])];
+        }
+        
+        List<ConditionExpression> conditions = [];
+        List<SqlToken> oneConditionTokens = [];
+        List<SqlToken> logicalOperators = [];
+
+        for (int i = 0; i < conditionTokens.Length; i++)
+        {
+            oneConditionTokens.Add(conditionTokens[i]);
+
+            if (conditionTokens[i].IsOperator(OperatorType.LogicalOperator))
+            {
+                conditions.Add(parseCondition(oneConditionTokens));
+                oneConditionTokens.Clear();
+                logicalOperators.Add(conditionTokens[i]);
+            }
+            else if (i == conditionTokens.Length - 1)
+            {
+                conditions.Add(parseCondition(oneConditionTokens));
+            }
+        }
+
+        return conditions.ToArray();
+
+        ConditionExpression parseCondition(IReadOnlyList<SqlToken> tokens) =>
+            new(
+                tokens[0],
+                tokens[2],
+                tokens[1]);
     }
 }

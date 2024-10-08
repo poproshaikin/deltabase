@@ -25,3 +25,20 @@ public class FromExpression : SqlExpression, IWithTableName
         TableName = tableName;
     }
 }
+
+public class ConditionExpression : SqlExpression
+{
+    public SqlToken LeftOperand { get; set; }
+    public SqlToken RightOperand { get; set; }
+    public SqlToken Operator { get; set; }
+
+    public ConditionExpression(
+        SqlToken leftOperand,
+        SqlToken rightOperand,
+        SqlToken @operator)
+    {
+        LeftOperand = leftOperand;
+        RightOperand = rightOperand;
+        Operator = @operator;
+    }
+}
