@@ -24,4 +24,4 @@ Development will start after completing basic functions in database engine.
 
 ----
 # License
-This project is licensed under the MIT license.
+This project is licensed under the [MIT license](LICENSE.txt).
