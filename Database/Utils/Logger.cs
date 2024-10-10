@@ -19,7 +19,7 @@ public static class Logger
     
     public static void LogHeader(string s)
     {
-        Console.WriteLine($" {DateTime.Now} --- {s} ---");
+        Console.WriteLine($"{DateTime.Now} --- {s} ---");
     }
 
     public static void Debug(string s)
