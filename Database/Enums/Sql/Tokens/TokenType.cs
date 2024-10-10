@@ -15,5 +15,8 @@ public enum TokenType
     
     Separator,
     
-    Comment
+    Comment,
+    Constraint,
+    
+    ValueType
 }
