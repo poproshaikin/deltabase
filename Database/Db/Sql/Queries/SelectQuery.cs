@@ -1,7 +1,7 @@
 using Sql.Expressions;
 using Sql.Tokens;
 
-namespace Sql.Common.Queries;
+namespace Sql.Queries;
 
 public class SelectQuery : SqlQuery, IQueryWithPassedColumns, IQueryWithTableName, IQueryWithCondition
 {

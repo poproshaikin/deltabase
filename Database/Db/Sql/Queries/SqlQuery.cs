@@ -1,6 +1,6 @@
 using Sql.Tokens;
 
-namespace Sql.Common.Queries;
+namespace Sql.Queries;
 
 public abstract class SqlQuery
 {
