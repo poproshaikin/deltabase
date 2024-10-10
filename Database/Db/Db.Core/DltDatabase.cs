@@ -1,10 +1,11 @@
 using Db.Records;
+using Enums.FileSystem;
 using Enums.Sql.Queries;
 using Enums.Tcp;
 using Sql;
-using Sql.Common.Queries;
 using Sql.Core;
 using Sql.Expressions;
+using Sql.Queries;
 using Sql.Tokens;
 using Utils;
 
@@ -48,6 +49,12 @@ public class DltDatabase
         return ExecuteQuery(command);
     }
     
+    /// <summary>
+    /// Executes a given SQL command based on its type.
+    /// </summary>
+    /// <param name="command">The SQL command to be executed.</param>
+    /// <returns>Response bytes based on the execution result.</returns>
+    /// <exception cref="NotImplementedException">Thrown if the command type is not implemented or recognized.</exception>
     private byte[] ExecuteQuery(SqlQuery command)
     {
         try
@@ -58,6 +65,7 @@ public class DltDatabase
                 InsertQuery insert => ExecuteInsert(insert),
                 UpdateQuery update => ExecuteUpdate(update),
                 DeleteQuery delete => ExecuteDelete(delete),
+                CreateTableQuery create => ExecuteCreate(create),
 
                 _ => throw new NotImplementedException()
             };
@@ -69,6 +77,11 @@ public class DltDatabase
         }
     }
 
+    /// <summary>
+    /// Executes a SELECT query and retrieves records based on the specified criteria.
+    /// </summary>
+    /// <param name="select">The select query containing table name, columns, and conditions.</param>
+    /// <returns>The retrieved records in byte format.</returns>
     private byte[] ExecuteReader(SelectQuery select)
     {
         RecordsReader reader = new(_fs, dbName: Name);
@@ -107,7 +120,13 @@ public class DltDatabase
             }
         }
     }
-
+    
+    /// <summary>
+    /// Inserts a new row into the specified table.
+    /// </summary>
+    /// <param name="insert">The insert query containing the table name and values to be inserted.</param>
+    /// <returns>Response indicating success or an error message if the insertion fails.</returns>
+    /// <exception cref="TcpResponseType">Returns <see cref="TcpResponseType.PassedPkValueIsntUnique"/> if the primary key value is not unique.</exception>
     private byte[] ExecuteInsert(InsertQuery insert)
     {
         RecordsReader reader = new(_fs, dbName: Name);
@@ -128,6 +147,12 @@ public class DltDatabase
         return SortAndWrite(read, insert);
     }
 
+    /// <summary>
+    /// Sorts values according to the specified columns and writes the new row to the database.
+    /// </summary>
+    /// <param name="read">The current records of the table.</param>
+    /// <param name="insert">The insert query containing columns and values to be sorted and inserted.</param>
+    /// <returns>Response indicating success.</returns>
     private byte[] SortAndWrite(Record read, InsertQuery insert)
     {
         RecordsWriter writer = new(_fs, dbName: Name);
@@ -141,6 +166,12 @@ public class DltDatabase
         return ParseHelper.GetBytes(TcpResponseType.Success);
     }
 
+    /// <summary>
+    /// Updates existing rows in the specified table based on provided assignments and conditions.
+    /// </summary>
+    /// <param name="update">The update query containing table name, assignments, and conditions.</param>
+    /// <returns>Response indicating success.</returns>
+    /// <exception cref="TcpResponseType">Returns <see cref="TcpResponseType.InvalidPassedValueType"/> if the value type for an assignment is invalid.</exception>
     private byte[] ExecuteUpdate(UpdateQuery update)
     {
         RecordsReader reader = new(_fs, dbName: Name);
@@ -154,7 +185,7 @@ public class DltDatabase
             int columnId = read.GetColumnId(columnName);
 
             if (!_helper.IsPassedValueTypeValid(assignment.RightOperand, read.Columns[columnId]))
-                throw new InvalidDataException();
+                return ParseHelper.GetBytes(TcpResponseType.InvalidPassedValueType);
             
             foreach (RecordRow row in read.Rows)
             {
@@ -170,11 +201,14 @@ public class DltDatabase
 
         return ParseHelper.GetBytes(TcpResponseType.Success);
     }
-
+    
+    /// <summary>
+    /// Deletes records from the specified table based on conditions.
+    /// </summary>
+    /// <param name="delete">The delete query containing table name, columns, and conditions.</param>
+    /// <returns>Response indicating success.</returns>
     private byte[] ExecuteDelete(DeleteQuery delete)
     {
-        // DELETE * FROM Students WHERE Id == 1
-        
         RecordsReader reader = new(_fs, dbName: Name);
         RecordsWriter writer = new(_fs, dbName: Name);
         Record read = reader.Read(delete.TableName);
@@ -206,6 +240,25 @@ public class DltDatabase
         }
 
         writer.Write(read);
+        return ParseHelper.GetBytes(TcpResponseType.Success);
+    }
+    
+    private byte[] ExecuteCreate(CreateTableQuery create)
+    {
+        if (_fs.ExistsRecord(dbName: Name, create.TableName))
+        {
+            return ParseHelper.GetBytes(TcpResponseType.TableAlreadyExists);
+        }
+
+        _fs.CreateRecordFolder(dbName: Name, create.TableName);
+
+        string[] defRows = create.NewColumns.Select(c => c.ToString()!).ToArray();
+        string[] recordRows = ["[", "]"];
+        Task.WhenAll(
+            _fs.WriteToRecordFileAsync(dbName: Name, create.TableName, FileExtension.DEF, defRows),
+            _fs.WriteToRecordFileAsync(dbName: Name, create.TableName, FileExtension.RECORD, recordRows)
+        );
+        
         return ParseHelper.GetBytes(TcpResponseType.Success);
     }
 }
