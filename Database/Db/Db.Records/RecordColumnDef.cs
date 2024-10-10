@@ -34,7 +34,7 @@ public class RecordColumnDef
     {
         Name = name;
         ValueType = EnumsStorage.GetColumnValueType(valueType);
-        Constraints = ParseHelper.ParseConstraints(constraints);
+        Constraints = constraints.Select(EnumsStorage.GetConstraint).ToArray();
     }
 
     /// <summary>
