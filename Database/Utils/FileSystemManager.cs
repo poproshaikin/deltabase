@@ -1,63 +1,144 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Enums;
 using Enums.FileSystem;
 
 namespace Utils;
 
+/// <summary>
+/// Manages file system operations for databases and records within a server's file system.
+/// </summary>
 public class FileSystemManager
 {
+    /// <summary>
+    /// Gets the name of the server managing the file system.
+    /// </summary>
     public string ServerName { get; private set; }
     
-    private string? _serverPath => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+    /// <summary>
+    /// Gets the base server path of the executing assembly's location.
+    /// </summary>
+    private readonly string _serverPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
     
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileSystemManager"/> class.
+    /// </summary>
+    /// <param name="serverName">The name of the server managing the file system.</param>
     public FileSystemManager(string serverName)
     {
         ServerName = serverName;
     }
 
     /// <summary>
-    /// Asynchronously reads the record file from the database file system with <see cref="RECORD_EXTENSION"/>
+    /// Gets the full file system path to the folder of the specified database.
     /// </summary>
-    /// <param name="dbName">The name of the database accessing to the file system</param>
-    /// <param name="recordName">The name of the record readed</param>
-    public async Task<string[]> ReadRecordRowsAsync(string dbName, string recordName)
-    {
-        string path = GetRecordPath(dbName, recordName, FileExtension.RECORD);
-        return await File.ReadAllLinesAsync(path);
-    }
-
-    /// <summary>
-    /// Asynchronously reads the record file from the database file system with <see cref="DEF_EXTENSION"/>
-    /// </summary>
-    /// <param name="dbName">The name of the database accessing to the file system</param>
-    /// <param name="recordName">The name of the record readed</param>
-    public async Task<string[]> ReadRecordDefsAsync(string dbName, string recordName)
-    {
-        string path = GetRecordPath(dbName, recordName, FileExtension.DEF);
-        return await File.ReadAllLinesAsync(path);
-    }
-    
-    public async Task WriteRecordAsync(string dbName, string recordName, IEnumerable<string> rowsList)
-    {
-        string path = GetRecordPath(dbName, recordName, FileExtension.RECORD);
-        await File.WriteAllLinesAsync(path, rowsList);
-    }
-
+    /// <param name="databaseName">The name of the database.</param>
+    /// <returns>The full path to the database folder.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string GetDatabaseFolderPath(string databaseName)
     {
         return $"{_serverPath}/{ServerName}/db/{databaseName}";
     }
-
+    
+    /// <summary>
+    /// Gets the full file system path to the configuration file of the specified database.
+    /// </summary>
+    /// <param name="databaseName">The name of the database.</param>
+    /// <returns>The full path to the database configuration file.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string GetDatabaseConfPath(string databaseName)
     {
-        return $"{GetDatabaseFolderPath(databaseName)}/{databaseName}.{ParseHelper.ParseExtension(FileExtension.CONF)}";
+        return $"{GetDatabaseFolderPath(databaseName)}/{databaseName}.{EnumsStorage.GetExtensionString(FileExtension.CONF)}";
     }
 
-    public string GetRecordPath(string databaseName, string recordName, FileExtension extension)
+    /// <summary>
+    /// Gets the full file system path to the specified record file within a database.
+    /// </summary>
+    /// <param name="databaseName">The name of the database.</param>
+    /// <param name="recordName">The name of the record.</param>
+    /// <param name="extension">The file extension for the record (e.g., RECORD or DEF).</param>
+    /// <returns>The full path to the record file.</returns>
+    public string GetRecordFilePath(string databaseName, string recordName, FileExtension extension)
     {
-        string extensionStr = extension == default ? "" : $".{ParseHelper.ParseExtension(extension)}";
+        string extensionStr = extension == default ? "" : $".{EnumsStorage.GetExtensionString(extension)}";
         return $"{GetDatabaseFolderPath(databaseName)}/records/{recordName}/{recordName}{extensionStr}";
+    }
+    
+    /// <summary>
+    /// Reads the specified record file asynchronously and returns its contents as an array of strings.
+    /// </summary>
+    /// <param name="dbName">The name of the database.</param>
+    /// <param name="recordName">The name of the record file.</param>
+    /// <param name="extension">The file extension of the record.</param>
+    /// <returns>An array of strings representing the contents of the file.</returns>
+    public async Task<string[]> ReadRecordFileAsync(string dbName, string recordName, FileExtension extension)
+    {
+        string path = GetRecordFilePath(dbName, recordName, extension);
+        return await File.ReadAllLinesAsync(path);
+    }
+
+    /// <summary>
+    /// Reads the specified record file and returns its contents as an array of strings.
+    /// </summary>
+    /// <param name="dbName">The name of the database.</param>
+    /// <param name="recordName">The name of the record file.</param>
+    /// <param name="extension">The file extension of the record.</param>
+    /// <returns>An array of strings representing the contents of the file.</returns>
+    public string[] ReadRecordFile(string dbName, string recordName, FileExtension extension) =>
+        ReadRecordFileAsync(dbName, recordName, extension).GetAwaiter().GetResult();
+
+    /// <summary>
+    /// Writes the specified rows to the record file asynchronously.
+    /// </summary>
+    /// <param name="dbName">The name of the database.</param>
+    /// <param name="recordName">The name of the record file.</param>
+    /// <param name="extension">The file extension of the record.</param>
+    /// <param name="rows">An enumerable collection of strings representing the rows to write to the file.</param>
+    /// <returns>A task that represents the asynchronous write operation.</returns>
+    public async Task WriteToRecordFileAsync(string dbName, string recordName, FileExtension extension, IEnumerable<string> rows)
+    {
+        string path = GetRecordFilePath(dbName, recordName, extension);
+        await File.WriteAllLinesAsync(path, rows);
+    }
+    
+    /// <summary>
+    /// Writes the specified rows to the record file.
+    /// </summary>
+    /// <param name="dbName">The name of the database.</param>
+    /// <param name="recordName">The name of the record file.</param>
+    /// <param name="extension">The file extension of the record.</param>
+    /// <param name="rows">An enumerable collection of strings representing the rows to write to the file.</param>
+    public void WriteToRecordFile(string dbName, string recordName, FileExtension extension, IEnumerable<string> rows) =>
+        WriteToRecordFileAsync(dbName, recordName, extension, rows).GetAwaiter().GetResult();
+
+    /// <summary>
+    /// Gets the folder path of the specified record in the given database.
+    /// </summary>
+    /// <param name="dbName">The name of the database.</param>
+    /// <param name="recordName">The name of the record.</param>
+    /// <returns>The full folder path of the record within the database.</returns>
+    public string GetRecordFolderPath(string dbName, string recordName)
+    {
+        string dbFolderPath = GetDatabaseFolderPath(dbName);
+        return $"{dbFolderPath}/records/{recordName}";
+    }
+
+    /// <summary>
+    /// Checks whether a specific table exists in the database.
+    /// </summary>
+    /// <param name="dbName">The name of the database being checked.</param>
+    /// <param name="recordName">The name of the table to check for existence.</param>
+    /// <returns><c>true</c> if the table exists; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool ExistsRecord(string dbName, string recordName)
+    {
+        return Directory.Exists(GetRecordFolderPath(dbName, recordName));
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void CreateRecordFolder(string dbName, string recordName)
+    {
+        string path = GetRecordFolderPath(dbName, recordName);
+        Directory.CreateDirectory(path);
     }
 }
