@@ -2,25 +2,39 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Enums;
+using Enums.Records.Columns;
 using Enums.Sql.Tokens;
 using Exceptions;
-using Sql.Common.Queries;
 using Sql.Expressions;
+using Sql.Queries;
 using Sql.Tokens;
 
 namespace Sql.Core;
 
+/// <summary>
+/// Parses SQL queries and converts them into corresponding SQL query objects.
+/// </summary>
 public class QueryParser
 {
+    /// <summary>
+    /// Parses the provided SQL string and converts it into a <see cref="SqlQuery"/> object.
+    /// </summary>
+    /// <param name="sql">The SQL query string to parse.</param>
+    /// <returns>A <see cref="SqlQuery"/> object representing the parsed SQL.</returns>
     public SqlQuery Parse(string sql)
     {
         SqlToken[] tokens = ToTokens(sql);
         return ToQuery(tokens);
     }
 
+    /// <summary>
+    /// Converts a SQL query string into an array of tokens.
+    /// </summary>
+    /// <param name="sql">The SQL query string to tokenize.</param>
+    /// <returns>An array of <see cref="SqlToken"/> representing the tokens in the SQL string.</returns>
     private SqlToken[] ToTokens(string sql)
     {
-        List<SqlToken> tokenList = new();
+        List<SqlToken> tokenList = [];
         
         string[] lexems = sql.Split(SeparatorType.Whitespace, SeparatorType.Comma, SeparatorType.LeftParenthesis,
             SeparatorType.RightParenthesis);
@@ -42,72 +56,124 @@ public class QueryParser
         return tokenList.ToArray();
     }
 
+    /// <summary>
+    /// Converts an array of SQL tokens into the corresponding <see cref="SqlQuery"/> object.
+    /// </summary>
+    /// <param name="tokens">The array of <see cref="SqlToken"/> to convert.</param>
+    /// <returns>A <see cref="SqlQuery"/> object representing the parsed tokens.</returns>
     private SqlQuery ToQuery(SqlToken[] tokens)
     {
         return tokens[0] switch
         {
-            { } t when t.IsKeyword(Keyword.Select) => ParseQuery<SelectQuery>(tokens),
-            { } t when t.IsKeyword(Keyword.Insert) => ParseQuery<InsertQuery>(tokens),
-            { } t when t.IsKeyword(Keyword.Update) => ParseQuery<UpdateQuery>(tokens),
-            { } t when t.IsKeyword(Keyword.Delete) => ParseQuery<DeleteQuery>(tokens),
+            { } t when t.IsKeyword(Keyword.Select) => ParseSelect(tokens),
+            { } t when t.IsKeyword(Keyword.Insert) => ParseInsert(tokens),
+            { } t when t.IsKeyword(Keyword.Update) => ParseUpdate(tokens),
+            { } t when t.IsKeyword(Keyword.Delete) => ParseDelete(tokens),
+            { } t when t.IsKeyword(Keyword.Create) => ParseCreate(tokens),
 
             _ => throw new NotImplementedException()
         };
     }
 
-    private static SqlQuery ParseQuery<TQuery>(SqlToken[] tokens) where TQuery : SqlQuery
+    /// <summary>
+    /// Parses a SELECT query from the provided tokens.
+    /// </summary>
+    /// <param name="tokens">The array of <see cref="SqlToken"/> representing the SELECT query.</param>
+    /// <returns>A <see cref="SelectQuery"/> object representing the parsed SELECT query.</returns>
+    private SelectQuery ParseSelect(SqlToken[] tokens)
     {
         int selectIndex = tokens.IndexOf(Keyword.Select);
         int fromIndex = tokens.IndexOf(Keyword.From);
-        int intoIndex = tokens.IndexOf(Keyword.Into);
-        int valuesIndex = tokens.IndexOf(Keyword.Values);
-        int updateIndex = tokens.IndexOf(Keyword.Update);
-        int setIndex = tokens.IndexOf(Keyword.Set);
         int whereIndex = tokens.IndexOf(Keyword.Where);
-        int deleteIndex = tokens.IndexOf(Keyword.Delete);
-        
-        return typeof(TQuery) switch
+
+        return new SelectQuery(tokens)
         {
-            { } t when t == typeof(SelectQuery) => new SelectQuery(tokens)
-            {
-                SelectAllColumns = tokens[selectIndex + 1].IsOperator(OperatorType.Asterisk),
-                PassedColumns = tokens[(selectIndex + 1)..fromIndex],
-                TableName = tokens[fromIndex + 1],
-                Condition = whereIndex is not -1 ? ParseConditionGroup(tokens[(whereIndex + 1)..]) : null
-            },
-
-            { } t when t == typeof(InsertQuery) => new InsertQuery(tokens)
-            {
-                TableName = tokens[intoIndex + 1],
-                PassedColumns = tokens[(intoIndex + 2)..valuesIndex],
-                PassedValues = tokens[(valuesIndex + 1)..]
-            },
-
-            { } t when t == typeof(UpdateQuery) => new UpdateQuery(tokens)
-            {
-                TableName = tokens[updateIndex + 1],
-                Assignments = ParseAssignExpression(tokens[(setIndex + 1)..whereIndex]),
-                Condition = whereIndex != -1 ? ParseConditionGroup(tokens[(whereIndex + 1)..]) : null,
-            },
-            
-            { } t when t == typeof(DeleteQuery) => new DeleteQuery(tokens)
-            {
-                TableName = tokens[fromIndex + 1],
-                PassedColumns = tokens[(deleteIndex + 1)..fromIndex],
-                SelectAllColumns = tokens[deleteIndex + 1].IsOperator(OperatorType.Asterisk),
-                Condition = whereIndex != -1 ? ParseConditionGroup(tokens[(whereIndex + 1)..]) : null,
-            },
-            
-            { } t when t == typeof(CreateTableQuery) => new CreateTableQuery(tokens)
-            {
-                
-            },
-
-            _ => throw new NotImplementedException(),
+            SelectAllColumns = tokens[selectIndex + 1].IsOperator(OperatorType.Asterisk),
+            PassedColumns = tokens[(selectIndex + 1)..fromIndex],
+            TableName = tokens[fromIndex + 1],
+            Condition = whereIndex is not -1 ? ParseConditionGroup(tokens[(whereIndex + 1)..]) : null
         };
     }
 
-    private static AssignExpr[] ParseAssignExpression(SqlToken[] tokens)
+    /// <summary>
+    /// Parses an INSERT query from the provided tokens.
+    /// </summary>
+    /// <param name="tokens">The array of <see cref="SqlToken"/> representing the INSERT query.</param>
+    /// <returns>A <see cref="InsertQuery"/> object representing the parsed INSERT query.</returns>
+    private InsertQuery ParseInsert(SqlToken[] tokens)
+    {
+        int intoIndex = tokens.IndexOf(Keyword.Into);
+        int valuesIndex = tokens.IndexOf(Keyword.Values);
+
+        return new InsertQuery(tokens)
+        {
+            TableName = tokens[intoIndex + 1],
+            PassedColumns = tokens[(intoIndex + 2)..valuesIndex],
+            PassedValues = tokens[(valuesIndex + 1)..]
+        };
+    }
+
+    /// <summary>
+    /// Parses an UPDATE query from the provided tokens.
+    /// </summary>
+    /// <param name="tokens">The array of <see cref="SqlToken"/> representing the UPDATE query.</param>
+    /// <returns>A <see cref="UpdateQuery"/> object representing the parsed UPDATE query.</returns>
+    private UpdateQuery ParseUpdate(SqlToken[] tokens)
+    {
+        int updateIndex = tokens.IndexOf(Keyword.Update);
+        int setIndex = tokens.IndexOf(Keyword.Set);
+        int whereIndex = tokens.IndexOf(Keyword.Where);
+
+        return new UpdateQuery(tokens)
+        {
+            TableName = tokens[updateIndex + 1],
+            Assignments = ParseAssignExpression(tokens[(setIndex + 1)..whereIndex]),
+            Condition = whereIndex != -1 ? ParseConditionGroup(tokens[(whereIndex + 1)..]) : null,
+        };
+    }
+
+    /// <summary>
+    /// Parses a DELETE query from the provided tokens.
+    /// </summary>
+    /// <param name="tokens">The array of <see cref="SqlToken"/> representing the DELETE query.</param>
+    /// <returns>A <see cref="DeleteQuery"/> object representing the parsed DELETE query.</returns>
+    private DeleteQuery ParseDelete(SqlToken[] tokens)
+    {
+        int whereIndex = tokens.IndexOf(Keyword.Where);
+        int deleteIndex = tokens.IndexOf(Keyword.Delete);
+        int fromIndex = tokens.IndexOf(Keyword.From);
+
+        return new DeleteQuery(tokens)
+        {
+            TableName = tokens[fromIndex + 1],
+            PassedColumns = tokens[(deleteIndex + 1)..fromIndex],
+            SelectAllColumns = tokens[deleteIndex + 1].IsOperator(OperatorType.Asterisk),
+            Condition = whereIndex != -1 ? ParseConditionGroup(tokens[(whereIndex + 1)..]) : null,
+        };
+    }
+    
+    /// <summary>
+    /// Parses a CREATE TABLE query from the provided tokens.
+    /// </summary>
+    /// <param name="tokens">The array of <see cref="SqlToken"/> representing the CREATE TABLE query.</param>
+    /// <returns>A <see cref="DeleteQuery"/> object representing the parsed CREATE TABLE query.</returns>
+    private CreateTableQuery ParseCreate(SqlToken[] tokens)
+    {
+        int tableIndex = tokens.IndexOf(Keyword.Table);
+        
+        return new CreateTableQuery(tokens)
+        {
+            TableName = tokens[tableIndex + 1],
+            NewColumns = ParseColumnDefExpressions(tokens[(tableIndex + 2)..])
+        };
+    }
+
+    /// <summary>
+    /// Parses assignment expressions from the provided tokens.
+    /// </summary>
+    /// <param name="tokens">The array of <see cref="SqlToken"/> representing the assignment expressions.</param>
+    /// <returns>An array of <see cref="AssignExpr"/> representing the parsed assignment expressions.</returns>
+    private AssignExpr[] ParseAssignExpression(SqlToken[] tokens)
     {
         const int expression_length = 3;
         const int operator_position = 1;
@@ -127,11 +193,11 @@ public class QueryParser
         }
         else // "Identifier1" = "Value1", "Identifier2" = "Value2", ...
         {
-            List<AssignExpr> assignments = new();
+            List<AssignExpr> assignments = [];
             int lastPosition = 0;
             for (int i = 0; i < assignmentsCount; i++)
             {
-                List<SqlToken> operands = new();
+                List<SqlToken> operands = [];
                 for (int j = 0; j < expression_length; j++)
                 {
                     lastPosition++;
@@ -150,7 +216,12 @@ public class QueryParser
         }
     }
 
-    private static ConditionGroup? ParseConditionGroup(SqlToken[]? conditionTokens)
+    /// <summary>
+    /// Parses a condition group from the provided tokens.
+    /// </summary>
+    /// <param name="conditionTokens">The array of <see cref="SqlToken"/> representing the condition tokens.</param>
+    /// <returns>A <see cref="ConditionGroup"/> representing the parsed condition group, or null if no conditions are present.</returns>
+    private ConditionGroup? ParseConditionGroup(SqlToken[]? conditionTokens)
     {
         if (conditionTokens is null)
             return null;
@@ -162,9 +233,9 @@ public class QueryParser
                 logicalOperators: Array.Empty<SqlToken>());
         }
 
-        List<ConditionExpr> conditions = new();
-        List<SqlToken> oneConditionTokens = new();
-        List<SqlToken> logicalOperators = new();
+        List<ConditionExpr> conditions = [];
+        List<SqlToken> oneConditionTokens = [];
+        List<SqlToken> logicalOperators = [];
 
         for (int i = 0; i < conditionTokens.Length; i++)
         {
@@ -185,6 +256,50 @@ public class QueryParser
         return new ConditionGroup(conditions, logicalOperators);
     }
 
+    private ColumnDefExpression[] ParseColumnDefExpressions(SqlToken[] columnDefTokens)
+    {
+        // Id INTEGER PK AU, Name STRING
+        // Id Identifier
+        // INTEGER ValueType
+        // PK Constraint
+        // AU Constraint
+        // Name Identifier
+        // STRING ValueType
+    
+        List<ColumnDefExpression> columns = [];
+        List<SqlToken> oneExpressionTokens = [];
+
+        for (int i = 0; i < columnDefTokens.Length; i++)
+        {
+            oneExpressionTokens.Add(columnDefTokens[i]);
+            
+            if (i == columnDefTokens.Length - 1)
+            {
+                columns.Add(newColumnDefExpression(oneExpressionTokens));
+            }
+            else if (columnDefTokens[i + 1].IsType(TokenType.Identifier))
+            {
+                columns.Add(newColumnDefExpression(oneExpressionTokens));
+                oneExpressionTokens.Clear();
+            }
+        }
+
+        return columns.ToArray();
+
+        ColumnDefExpression newColumnDefExpression(IReadOnlyList<SqlToken> tokens)
+        {
+            return new ColumnDefExpression(
+                columnName: oneExpressionTokens[0],
+                valueType: oneExpressionTokens[1],
+                constraints: oneExpressionTokens.Count > 2 ? oneExpressionTokens[2..] : null);
+        }
+    }
+
+    /// <summary>
+    /// Parses a literal token from a string representation.
+    /// </summary>
+    /// <param name="literal">The string representation of the literal.</param>
+    /// <returns>A <see cref="SqlToken"/> representing the parsed literal.</returns>
     private SqlToken ParseLiteral(string literal)
     {
         if (literal[0] == '\'' && literal[^1] == '\'')
