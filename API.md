@@ -14,8 +14,8 @@ To interact with **Deltabase** you can use [**Tcp**](#tcp) protocol or
 > >
 > >*Argument part* - part containing an argument to the command  
 > >
-> >*Separator* - two parts are separated using the ' ■' combination,  
-> > you can type it using _Alt+255_, _Alt+254_
+> >*Separator* - two parts are separated using the '■ ' combination,  
+> > you can type it using _Alt+254_, _Alt+255_
 
 >`~connect` - command establishing a connection to the database.  
 > > Takes connection string as an argument.
@@ -40,28 +40,20 @@ To interact with **Deltabase** you can use [**Tcp**](#tcp) protocol or
 
 ### Abbreviated response codes
 
-> >**1** - Connected successfully
->
-> >**2** - Database name isn't specified
-> 
-> >**3** - Server doesn't exist 
-> 
-> >**4** - Database doesn't exist
->
-> >**5** - User doesn't exist 
->
-> >**6** - Invalid password
->
-> >**7** - Unauthorized
-> 
-> >**8** - Invalid SQL
->
-> >**9** - Success
->
+> >**1** - Connected successfully  
+> >**2** - Database name isn't specified  
+> >**3** - Server doesn't exist  
+> >**4** - Database doesn't exist  
+> >**5** - User doesn't exist  
+> >**6** - Invalid password  
+> >**7** - Unauthorized  
+> >**8** - Invalid SQL  
+> >**9** - Success  
 > >**10** - Internal server error
 > 
-> >**100** - Passed primary key value isn't unique
-> 
+> >**100** - Passed primary key value isn't unique  
+> >**101** - Invalid passed value type  
+> >**102** - Table already exists
 ----
 
 ### Database client library
