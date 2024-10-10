@@ -1,3 +1,4 @@
+using Enums.FileSystem;
 using Utils;
 
 namespace Db.Records;
@@ -28,8 +29,8 @@ public class RecordsReader
     /// <returns>A <see cref="Record"/> containing the rows and definitions from the specified table.</returns>
     public Record Read(string tableName)
     {
-        Task<string[]> rows = _fs.ReadRecordRowsAsync(_dbName, tableName);
-        Task<string[]> defs = _fs.ReadRecordDefsAsync(_dbName, tableName);
+        Task<string[]> rows = _fs.ReadRecordFileAsync(_dbName, tableName, FileExtension.RECORD);
+        Task<string[]> defs = _fs.ReadRecordFileAsync(_dbName, tableName, FileExtension.DEF);
         
         return Record.ParseAndAwaitAsync(rows, defs, tableName);
     }

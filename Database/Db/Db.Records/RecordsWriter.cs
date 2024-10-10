@@ -1,3 +1,4 @@
+using Enums.FileSystem;
 using Utils;
 
 namespace Db.Records;
@@ -56,6 +57,6 @@ public class RecordsWriter
         List<string> rowsList = [..record.Rows.Select(r => r.ToString())];
         rowsList = rowsList.Prepend("[").ToList();
         rowsList.Add("]");
-        await _fs.WriteRecordAsync(_dbName, record.Name, rowsList);
+        await _fs.WriteToRecordFileAsync(_dbName, record.Name, FileExtension.RECORD, rowsList);
     }
 }
