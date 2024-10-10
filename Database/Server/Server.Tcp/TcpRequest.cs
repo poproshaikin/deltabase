@@ -1,3 +1,4 @@
+using Enums;
 using Enums.Tcp;
 using Utils;
 
@@ -39,7 +40,7 @@ public class TcpRequest
     {
         Message = message;
         var content = Command;
-        CommandType = ParseHelper.ParseCommandType(content);
+        CommandType = EnumsStorage.GetCommandType(content);
     }
     
     /// <summary>
