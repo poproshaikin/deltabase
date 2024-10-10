@@ -21,10 +21,6 @@ public class DltServer
     
     private DltConnectionConfig _connectionConfig;
     private string _serverName;
-    
-    private const string REDIRECTION_MESSAGE = "redirection";
-    private const string DATABASE_NULL_MESSAGE = "database name was null";
-    private const string UNAUTHORIZED_MESSAGE = "unauthorized";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DltServer"/> class.
@@ -36,7 +32,7 @@ public class DltServer
         _connectionConfig = cnnConfig;
         _fs = new FileSystemManager(_serverName);
         _listener = new DltTcpListener(cnnConfig);
-        _semaphore = new SemaphoreSlim(connected_clients_limit);
+        _semaphore = new SemaphoreSlim(initialCount: 1, maxCount: connected_clients_limit);
         _clients = new Dictionary<DltClient, DltDatabase>();
     }
 
@@ -51,6 +47,8 @@ public class DltServer
         while (true)
         {
             DltClient client = _listener.AcceptClient();
+            
+            Logger.Log($"Client accepted: {client.ClientEndPoint}");
             
             ProcessClientAsync(client);
         }
@@ -87,45 +85,56 @@ public class DltServer
     private async void ProcessRequestAsync(DltClient client, DltTcpHandler handler, TcpRequest request)
     {
         Logger.Log($"request received: \"{request.Message}\"");
-             
-        if (request.CommandType == TcpCommandType.connect)
+
+        switch (request.CommandType)
         {
-            bool authorized = VerifyRequest(request);
-
-            if (authorized)
+            case TcpCommandType.connect:
             {
-                client.Authorized = true;
-                client.RequestsAccepted++;
+                bool authorized = VerifyRequest(request);
 
-                _clients[client] = DltDatabaseInitializer.Init(request.GetConnectionConfig().Database!, _fs) ?? 
-                                   throw new InvalidOperationException(
-                                       $"The database named \"{request.GetConnectionConfig().Database}\" wasn't found");
+                if (authorized)
+                {
+                    client.Authorized = true;
+                    client.RequestsAccepted++;
 
-                handler.ConnectionConfig = request.GetConnectionConfig();
-                handler.Write(TcpResponseType.ConnectedSuccessfully);
-                return;
+                    _clients[client] = DltDatabaseInitializer.Init(request.GetConnectionConfig().Database!, _fs) ?? 
+                                       throw new InvalidOperationException(
+                                           $"The database named \"{request.GetConnectionConfig().Database}\" wasn't found");
+
+                    handler.ConnectionConfig = request.GetConnectionConfig();
+                    handler.Write(TcpResponseType.ConnectedSuccessfully);
+                    return;
+                }
+                else
+                {
+                    handler.Write(TcpResponseType.Unauthorized);
+                    handler.Dispose();
+                    return;
+                }
             }
-            else
+            case TcpCommandType.sql when !client.Authorized:
             {
                 handler.Write(TcpResponseType.Unauthorized);
                 handler.Dispose();
                 return;
             }
-        }
-        else if (request.CommandType == TcpCommandType.sql)
-        {
-            if (!client.Authorized)
+            case TcpCommandType.sql:
             {
-                handler.Write(TcpResponseType.Unauthorized);
-                handler.Dispose();
-                return;
-            }
-
-            string sql = request.Data;
-            byte[] result = _clients[client].ExecuteRequest(sql);
+                string sql = request.Data;
+                byte[] result = _clients[client].ExecuteRequest(sql);
                 
-            handler.Write(result);
-            return;
+                handler.Write(result);
+                return;
+            }
+            case TcpCommandType.close:
+            {
+                _clients.Remove(client);
+                
+                handler.Write(TcpResponseType.Success);
+                handler.Dispose();
+                
+                return;
+            }
         }
     }
 
