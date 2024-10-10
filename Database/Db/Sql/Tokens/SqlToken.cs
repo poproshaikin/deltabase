@@ -53,4 +53,6 @@ public class SqlToken
     {
         return Type == type;
     }
+
+    public override string ToString() => Value;
 }
