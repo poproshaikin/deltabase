@@ -29,7 +29,7 @@ public static class EnumHelper
             "PK" => ColumnConstraint.Pk,
             "UN" => ColumnConstraint.Un,
             "NN" => ColumnConstraint.Nn,
-            "AU" => ColumnConstraint.Au,
+            "AI" => ColumnConstraint.Ai,
 
             _ => throw new ArgumentOutOfRangeException(nameof(constraintStr), constraintStr, null)
         };
