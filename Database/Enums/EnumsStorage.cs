@@ -1,6 +1,8 @@
 using System.Security;
+using Enums.FileSystem;
 using Enums.Records.Columns;
 using Enums.Sql.Tokens;
+using Enums.Tcp;
 
 namespace Enums;
 
@@ -12,11 +14,25 @@ public static class EnumsStorage
         new Dictionary<string[], TokenType>()
         {
             {
-                new[] { "SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "TABLE", "INTO", "SET", "FROM", "VALUES", "WHERE" },
+                [ "SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "TABLE", "INTO", "SET", "FROM", "VALUES", "WHERE" ],
                 TokenType.Keyword
             },
-            { new[] { "+", "-", "*", "/", "=", "==", "<", ">", "<=", ">=", "AND", "OR", "NOT" }, TokenType.Operator },
-            { new[] { " ", ",", ";", "(", ")" }, TokenType.Separator },
+            {
+                [ "+", "-", "*", "/", "=", "==", "<", ">", "<=", ">=", "AND", "OR", "NOT" ], 
+                TokenType.Operator
+            },
+            {
+                [ " ", ",", ";", "(", ")" ], 
+                TokenType.Separator
+            },
+            {
+                [ "PK", "AI", "NN", "UN"],
+                TokenType.Constraint
+            },
+            {
+                [ "NULL", "INTEGER", "CHAR", "FLOAT", "STRING", "INTEGER[]", "CHAR[]", "FLOAT[]", "STRING[]" ],
+                TokenType.ValueType
+            }
         };
 
     public static readonly Dictionary<string, SeparatorType> SeparatorToTokenMap =
@@ -77,6 +93,32 @@ public static class EnumsStorage
             { "CHAR[]", ColumnValueType.CharArr },
             { "FLOAT[]", ColumnValueType.FloatArr },
         };
+
+    public static readonly Dictionary<string, ColumnConstraint> ColumnConstraintToTokenMap =
+        new Dictionary<string, ColumnConstraint>()
+        {
+            { "PK", ColumnConstraint.Pk },
+            { "AI", ColumnConstraint.Ai },
+            { "NN", ColumnConstraint.Nn },
+            { "UN", ColumnConstraint.Un },
+        };
+
+    public static readonly Dictionary<string, FileExtension> ExtensionToStringMap =
+        new Dictionary<string, FileExtension>()
+        {
+            { "def", FileExtension.DEF },
+            { "conf", FileExtension.CONF },
+            { "record", FileExtension.RECORD },
+        };
+
+    public static readonly Dictionary<string, TcpCommandType> CommandToStringMap =
+        new Dictionary<string, TcpCommandType>()
+        {
+            { "~sql", TcpCommandType.sql },
+            { "~connect", TcpCommandType.connect },
+            { "~close", TcpCommandType.close },
+            { "~test", TcpCommandType.test },
+        };
     
     public static ColumnValueType GetColumnValueType(string lexeme)
     {
@@ -92,6 +134,11 @@ public static class EnumsStorage
             null => default,
             not null => TokensToTokenTypeMap[foundLexemes],
         };
+    }
+
+    public static ColumnConstraint GetConstraint(string lexeme)
+    {
+        return ColumnConstraintToTokenMap[lexeme];
     }
 
     public static Keyword GetKeyword(string lexeme)
@@ -115,6 +162,12 @@ public static class EnumsStorage
         return type != default;
     }
 
+    public static bool TryGetConstraintType(string lexeme, out ColumnConstraint constraint)
+    {
+        constraint = GetConstraint(lexeme);
+        return constraint != default;
+    }
+
     public static string GetSeparatorString(SeparatorType type)
     {
         return SeparatorToTokenMap.FirstOrDefault(kvp => kvp.Value == type).Key ??
@@ -125,7 +178,17 @@ public static class EnumsStorage
     {
         return KeywordToTokenMap.FirstOrDefault(kvp => kvp.Value == type).Key ??
                throw new ArgumentOutOfRangeException(nameof(type), type, null);
-
+    }
+    
+    public static string GetExtensionString(FileExtension extension)
+    {
+        return ExtensionToStringMap.FirstOrDefault(kvp => kvp.Value == extension).Key ??
+               throw new ArgumentOutOfRangeException(nameof(extension), extension, null);
+    }
+    
+    public static TcpCommandType GetCommandType(string command)
+    {
+        return CommandToStringMap[command];
     }
 
     public static bool ContainsLexeme(string lexeme)
