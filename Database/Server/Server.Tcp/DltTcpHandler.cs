@@ -11,12 +11,12 @@ public class DltTcpHandler : DltTcpService, IDisposable
 {
     private TcpClient _currentClient; 
     private CancellationTokenSource _cancellationTokenSource;
-    private List<TcpRequest> _requests;
+    private Queue<TcpRequest> _requests;
     
     /// <summary>
     /// Gets the list of TCP requests received by this handler.
     /// </summary>
-    public IReadOnlyList<TcpRequest> Requests => _requests;
+    public IReadOnlyCollection<TcpRequest> Requests => _requests;
 
     /// <summary>
     /// Public property returning a protected field of the base class
@@ -45,7 +45,7 @@ public class DltTcpHandler : DltTcpService, IDisposable
     {
         _currentClient = client;
         _cancellationTokenSource = new CancellationTokenSource();
-        _requests = new List<TcpRequest>();
+        _requests = [];
         IsDisposed = false;
         
         StartReceivingAsync();
@@ -62,7 +62,7 @@ public class DltTcpHandler : DltTcpService, IDisposable
         while (!cancellationToken.IsCancellationRequested)
         {
             string message = await ReadAsync(cancellationToken);
-            _requests.Add(new TcpRequest(message));
+            _requests.Enqueue(new TcpRequest(message));
         }
     }
     
@@ -73,15 +73,14 @@ public class DltTcpHandler : DltTcpService, IDisposable
     public async Task<TcpRequest> AwaitRequestAsync()
     {
         await WaitForRequest();
-
-        TcpRequest first = _requests[0];
-        _requests.RemoveAt(0);
-        return first;
+        
+        return _requests.Dequeue();
     }
 
     /// <summary>
     /// Waits asynchronously for a new request to be received from the client.
     /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
     public async Task WaitForRequest() => await WaitForRequest(_cancellationTokenSource.Token);
     
     /// <summary>
