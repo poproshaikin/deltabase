@@ -1,7 +1,7 @@
 using Enums.Records.Columns;
 using Enums.Sql.Tokens;
 using Db.Records;
-using Sql.Common.Queries;
+using Sql.Queries;
 using Sql.Tokens;
 using Utils;
 using TokenType = Enums.Sql.Tokens.TokenType;
@@ -126,7 +126,7 @@ public class QueryProcessor
         RecordColumnDef pkCol = record.PkColumn!;
         
         SqlToken? passedPkCol = query.PassedColumns.FirstOrDefault(t => t.Value == pkCol.Name);
-        return passedPkCol is null && pkCol.HasConstraint(ColumnConstraint.Au);
+        return passedPkCol is null && pkCol.HasConstraint(ColumnConstraint.Ai);
     }
     
     public bool IsPassedPkValueValid(Record read, InsertQuery insert)
