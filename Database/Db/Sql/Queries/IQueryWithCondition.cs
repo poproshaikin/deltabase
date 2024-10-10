@@ -1,6 +1,6 @@
 using Sql.Expressions;
 
-namespace Sql.Common.Queries;
+namespace Sql.Queries;
 
 public interface IQueryWithCondition
 {
