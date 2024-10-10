@@ -14,5 +14,6 @@ public enum TcpResponseType
     InternalServerError        = 10,
     
     PassedPkValueIsntUnique    = 100,
-    
+    InvalidPassedValueType     = 101,
+    TableAlreadyExists         = 102,
 }
