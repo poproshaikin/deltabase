@@ -1,7 +1,7 @@
 using Db.Records;
 using Enums.Records.Columns;
 using Enums.Sql.Tokens;
-using Sql.Common.Queries;
+using Sql.Queries;
 using Sql.Tokens;
 
 namespace Sql.Core;
@@ -153,7 +153,7 @@ public class QueryHelper
         RecordColumnDef pkCol = record.PkColumn!;
         
         SqlToken? passedPkCol = query.PassedColumns.FirstOrDefault(t => t.Value == pkCol.Name);
-        return passedPkCol is null && pkCol.HasConstraint(ColumnConstraint.Au);
+        return passedPkCol is null && pkCol.HasConstraint(ColumnConstraint.Ai);
     }
     
     /// <summary>
