@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Sockets;
 
 namespace Server.Tcp;
@@ -14,6 +15,8 @@ public class DltClient : IDisposable
     /// </summary>
     private NetworkStream _stream => _client.GetStream();
     public bool IsDisposed { get; private set; }
+
+    public EndPoint? ClientEndPoint => _client.Client.RemoteEndPoint;
 
     /// <summary>
     /// Gets or sets the connection configuration for the client.
