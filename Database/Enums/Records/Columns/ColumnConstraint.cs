@@ -5,5 +5,5 @@ public enum ColumnConstraint
     Pk = 1,
     Un = 2,
     Nn = 3,
-    Au = 4,
+    Ai = 4,
 }
