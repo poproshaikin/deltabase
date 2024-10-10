@@ -1,6 +1,6 @@
 using Sql.Tokens;
 
-namespace Sql.Common.Queries;
+namespace Sql.Queries;
 
 public class InsertQuery : SqlQuery, IQueryWithPassedColumns, IQueryWithPassedValues, IQueryWithTableName
 {
