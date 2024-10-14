@@ -13,5 +13,5 @@ public enum OperatorType
     And,
     Or,
     Not,
-    LogicalOperator
+    Logical
 }
