@@ -1,7 +1,14 @@
 # Deltabase
 **Deltabase** - is the custom database application, primarily developed to 
-improve object-oriented design skills, currently supports SELECT, INSERT, UPDATE, 
-and DELETE commands.  
+improve object-oriented design skills.
+
+Currently supports:  
+`SELECT`  
+`INSERT`  
+`UPDATE`  
+`DELETE`  
+`CREATE TABLE`
+
 
 Future updates will include support for transactions and other DML, DDL and TCL commands.
 
