@@ -1,9 +1,8 @@
 using Db.Records;
 using Enums.FileSystem;
-using Enums.Sql.Queries;
 using Enums.Tcp;
-using Sql;
 using Sql.Core;
+using Sql.Core.Validation;
 using Sql.Expressions;
 using Sql.Queries;
 using Sql.Tokens;
@@ -23,6 +22,7 @@ public class DltDatabase
 
     private QueryParser _parser;
     private QueryHelper _helper;
+    private QueryValidator _validator;
     private FileSystemManager _fs;
 
     /// <summary>
@@ -35,6 +35,7 @@ public class DltDatabase
         _fs = fs;
         _parser = new QueryParser();
         _helper = new QueryHelper();
+        _validator = new QueryValidator();
         Name = dbName;
     }
 
@@ -59,6 +60,11 @@ public class DltDatabase
     {
         try
         {
+            if (_validator.IsInvalid(command, out ResponseType error))
+            {
+                return ParseHelper.GetBytes(error);
+            }
+            
             return command switch
             {
                 SelectQuery select => ExecuteReader(select),
@@ -73,7 +79,7 @@ public class DltDatabase
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            return ParseHelper.GetBytes(TcpResponseType.InternalServerError);
+            return ParseHelper.GetBytes(ResponseType.InternalServerError);
         }
     }
 
@@ -86,6 +92,11 @@ public class DltDatabase
     {
         RecordsReader reader = new(_fs, dbName: Name);
         Record read = reader.Read(select.TableName);
+
+        if (!_fs.ExistsRecord(dbName: Name, select.TableName))
+        {
+            return ParseHelper.GetBytes(ResponseType.TableDoesntExist);
+        }
         
         if (select.Condition is null)
         {
@@ -126,7 +137,7 @@ public class DltDatabase
     /// </summary>
     /// <param name="insert">The insert query containing the table name and values to be inserted.</param>
     /// <returns>Response indicating success or an error message if the insertion fails.</returns>
-    /// <exception cref="TcpResponseType">Returns <see cref="TcpResponseType.PassedPkValueIsntUnique"/> if the primary key value is not unique.</exception>
+    /// <exception cref="ResponseType">Returns <see cref="ResponseType.PassedPkValueIsntUnique"/> if the primary key value is not unique.</exception>
     private byte[] ExecuteInsert(InsertQuery insert)
     {
         RecordsReader reader = new(_fs, dbName: Name);
@@ -140,7 +151,7 @@ public class DltDatabase
             }
             else if (!_helper.IsPassedPkValueValid(read, insert))
             {
-                return ParseHelper.GetBytes(TcpResponseType.PassedPkValueIsntUnique);
+                return ParseHelper.GetBytes(ResponseType.PassedPkValueIsntUnique);
             }
         }
 
@@ -163,7 +174,7 @@ public class DltDatabase
         RecordRow rowToWrite = new RecordRow(valuesInRightOrder);
         writer.Write(read, newRow: rowToWrite);
         
-        return ParseHelper.GetBytes(TcpResponseType.Success);
+        return ParseHelper.GetBytes(ResponseType.Success);
     }
 
     /// <summary>
@@ -171,7 +182,7 @@ public class DltDatabase
     /// </summary>
     /// <param name="update">The update query containing table name, assignments, and conditions.</param>
     /// <returns>Response indicating success.</returns>
-    /// <exception cref="TcpResponseType">Returns <see cref="TcpResponseType.InvalidPassedValueType"/> if the value type for an assignment is invalid.</exception>
+    /// <exception cref="ResponseType">Returns <see cref="ResponseType.InvalidPassedValueType"/> if the value type for an assignment is invalid.</exception>
     private byte[] ExecuteUpdate(UpdateQuery update)
     {
         RecordsReader reader = new(_fs, dbName: Name);
@@ -185,7 +196,7 @@ public class DltDatabase
             int columnId = read.GetColumnId(columnName);
 
             if (!_helper.IsPassedValueTypeValid(assignment.RightOperand, read.Columns[columnId]))
-                return ParseHelper.GetBytes(TcpResponseType.InvalidPassedValueType);
+                return ParseHelper.GetBytes(ResponseType.InvalidPassedValueType);
             
             foreach (RecordRow row in read.Rows)
             {
@@ -199,7 +210,7 @@ public class DltDatabase
         RecordsWriter writer = new(_fs, dbName: Name);
         writer.Write(read);
 
-        return ParseHelper.GetBytes(TcpResponseType.Success);
+        return ParseHelper.GetBytes(ResponseType.Success);
     }
     
     /// <summary>
@@ -240,14 +251,14 @@ public class DltDatabase
         }
 
         writer.Write(read);
-        return ParseHelper.GetBytes(TcpResponseType.Success);
+        return ParseHelper.GetBytes(ResponseType.Success);
     }
     
     private byte[] ExecuteCreate(CreateTableQuery create)
     {
         if (_fs.ExistsRecord(dbName: Name, create.TableName))
         {
-            return ParseHelper.GetBytes(TcpResponseType.TableAlreadyExists);
+            return ParseHelper.GetBytes(ResponseType.TableAlreadyExists);
         }
 
         _fs.CreateRecordFolder(dbName: Name, create.TableName);
@@ -259,6 +270,6 @@ public class DltDatabase
             _fs.WriteToRecordFileAsync(dbName: Name, create.TableName, FileExtension.RECORD, recordRows)
         );
         
-        return ParseHelper.GetBytes(TcpResponseType.Success);
+        return ParseHelper.GetBytes(ResponseType.Success);
     }
 }
