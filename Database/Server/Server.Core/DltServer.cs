@@ -102,19 +102,19 @@ public class DltServer
                                            $"The database named \"{request.GetConnectionConfig().Database}\" wasn't found");
 
                     handler.ConnectionConfig = request.GetConnectionConfig();
-                    handler.Write(TcpResponseType.ConnectedSuccessfully);
+                    handler.Write(ResponseType.ConnectedSuccessfully);
                     return;
                 }
                 else
                 {
-                    handler.Write(TcpResponseType.Unauthorized);
+                    handler.Write(ResponseType.Unauthorized);
                     handler.Dispose();
                     return;
                 }
             }
             case TcpCommandType.sql when !client.Authorized:
             {
-                handler.Write(TcpResponseType.Unauthorized);
+                handler.Write(ResponseType.Unauthorized);
                 handler.Dispose();
                 return;
             }
@@ -130,7 +130,7 @@ public class DltServer
             {
                 _clients.Remove(client);
                 
-                handler.Write(TcpResponseType.Success);
+                handler.Write(ResponseType.Success);
                 handler.Dispose();
                 
                 return;
