@@ -73,22 +73,20 @@ public class DltTcpHandler : DltTcpService, IDisposable
     public async Task<TcpRequest> AwaitRequestAsync()
     {
         await WaitForRequest();
+
+        if (_cancellationTokenSource.IsCancellationRequested)
+            throw new OperationCanceledException();
         
         return _requests.Dequeue();
     }
-
-    /// <summary>
-    /// Waits asynchronously for a new request to be received from the client.
-    /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
-    public async Task WaitForRequest() => await WaitForRequest(_cancellationTokenSource.Token);
     
     /// <summary>
-    /// Waits asynchronously for a new request to be received, considering the provided cancellation token.
+    /// Waits asynchronously for a new request to be received, considering the cancellation token.
     /// </summary>
-    /// <param name="cancellationToken">The token to observe for cancellation.</param>
-    private async Task WaitForRequest(CancellationToken cancellationToken)
+    private async Task WaitForRequest()
     {
+        CancellationToken cancellationToken = _cancellationTokenSource.Token;
+        
         if (_requests.Count > 0)
         {
             return;
@@ -120,8 +118,8 @@ public class DltTcpHandler : DltTcpService, IDisposable
     /// <summary>
     /// Writes a predefined TCP response to the client's network stream.
     /// </summary>
-    /// <param name="response">The <see cref="TcpResponseType"/> to send as a response.</param>
-    public void Write(TcpResponseType response) => Write(((int)response).ToString());
+    /// <param name="response">The <see cref="ResponseType"/> to send as a response.</param>
+    public void Write(ResponseType response) => Write(((int)response).ToString());
     
     /// <summary>
     /// Reads a message from the client's network stream.
