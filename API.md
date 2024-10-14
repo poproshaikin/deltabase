@@ -51,9 +51,20 @@ To interact with **Deltabase** you can use [**Tcp**](#tcp) protocol or
 > >**9** - Success  
 > >**10** - Internal server error
 > 
-> >**100** - Passed primary key value isn't unique  
-> >**101** - Invalid passed value type  
-> >**102** - Table already exists
+> >**100** - A passed query has invalid SQL syntax  
+> >**101** - Invalid passed value type    
+> >**102** - Invalid length of the table name  
+> >**103** - Table name contains restricted symbols  
+> >**104** - Invalid length of the passed query  
+>
+> >**200** - Table already exists  
+>
+> >**250** - Table with passed name does not exist  
+> >**251** - Server with passed name does not exist  
+> >**252** - Database with passed name does not exist  
+> >**253** - User with passed name does not exist  
+>
+> >**300** - Passed primary key value is not unique  
 ----
 
 ### Database client library
