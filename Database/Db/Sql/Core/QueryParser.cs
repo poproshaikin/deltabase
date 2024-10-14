@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Enums;
-using Enums.Records.Columns;
 using Enums.Sql.Tokens;
-using Exceptions;
 using Sql.Expressions;
 using Sql.Queries;
 using Sql.Tokens;
@@ -156,7 +151,7 @@ public class QueryParser
     /// Parses a CREATE TABLE query from the provided tokens.
     /// </summary>
     /// <param name="tokens">The array of <see cref="SqlToken"/> representing the CREATE TABLE query.</param>
-    /// <returns>A <see cref="DeleteQuery"/> object representing the parsed CREATE TABLE query.</returns>
+    /// <returns>A <see cref="CreateTableQuery"/> object representing the parsed CREATE TABLE query.</returns>
     private CreateTableQuery ParseCreate(SqlToken[] tokens)
     {
         int tableIndex = tokens.IndexOf(Keyword.Table);
@@ -241,7 +236,7 @@ public class QueryParser
         {
             oneConditionTokens.Add(conditionTokens[i]);
 
-            if (conditionTokens[i].IsOperator(OperatorType.LogicalOperator))
+            if (conditionTokens[i].IsOperator(OperatorType.Logical))
             {
                 conditions.Add(new ConditionExpr(oneConditionTokens));
                 oneConditionTokens.Clear();
@@ -306,7 +301,7 @@ public class QueryParser
         {
             return new SqlToken(TokenType.StringLiteral, literal[1..^1]);
         }
-        else if (literal[0].IsNumeric())
+        else if (literal[0].IsNumeric() && literal.IsNumeric())
         {
             return new SqlToken(TokenType.NumberLiteral, literal);
         }
@@ -326,6 +321,7 @@ internal static partial class SqlCoreExtensions
     }
 
     public static bool IsNumeric(this char c) => "0123456789.".Contains(c);
+    public static bool IsNumeric(this string s) => s.All(IsNumeric);
 
     public static int IndexOf(this SqlToken[] tokens, SqlToken? token) => Array.IndexOf(tokens, token);
 
