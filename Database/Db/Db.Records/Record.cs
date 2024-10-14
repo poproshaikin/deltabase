@@ -233,7 +233,17 @@ public class Record
 
         return Rows.Select(r => new RecordRow(r[columnsIndexes])).ToArray();
     }
-    
+
+    /// <summary>
+    /// Checks if the collection of columns contains a column with the specified name.
+    /// </summary>
+    /// <param name="columnName">The name of the column to check for.</param>
+    /// <returns>
+    /// <c>true</c> if the collection contains a column with the specified name; otherwise, <c>false</c>.
+    /// </returns>
+    public bool ContainsColumn(string columnName) => 
+        Columns.Any(c => c.Name == columnName);
+
     /// <summary>
     /// Tries to get the last primary key value from the record if primary key column exists.
     /// </summary>
