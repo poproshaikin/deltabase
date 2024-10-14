@@ -41,7 +41,7 @@ public class SqlToken
         if (!IsType(TokenType.Operator))
             return false;
 
-        if (type == OperatorType.LogicalOperator)
+        if (type == OperatorType.Logical)
             return IsOperator(OperatorType.And) ||
                    IsOperator(OperatorType.Or) ||
                    IsOperator(OperatorType.Not);
