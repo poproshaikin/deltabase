@@ -1,5 +1,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
 using Enums;
 using Enums.FileSystem;
 
@@ -139,6 +141,55 @@ public class FileSystemManager
     public void CreateRecordFolder(string dbName, string recordName)
     {
         string path = GetRecordFolderPath(dbName, recordName);
+        Directory.CreateDirectory(path);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void CreateServerFolder()
+    {
+        string path = $"{_serverPath}/{ServerName}";
+        Directory.CreateDirectory(path);
+    }
+
+    public void CreateServerConfigFile(ushort port, string password)
+    {
+        string hashedPassword = ParseHelper.Sha256(password);
+        string path = $"{_serverPath}/{ServerName}.{EnumsStorage.GetExtensionString(FileExtension.CONF)}";
+        File.WriteAllLines(path, [ServerName, port.ToString(), hashedPassword]);
+    }
+
+    public string[] ReadServerConnectionConfigFile()
+    {
+        return File.ReadAllLines($"{_serverPath}/{ServerName}/{ServerName}.conf");
+    }
+
+    public void CreateDbsFile()
+    {
+        string path = $"{_serverPath}/{ServerName}/dbs";
+        File.Create(path);
+    }
+
+    public void CreateDbInServerFolder()
+    {
+        string path = $"{_serverPath}/{ServerName}/db/";
+        Directory.CreateDirectory(path);
+    }
+
+    public void CreateDbFolder(string dbName)
+    {
+        string path = $"{_serverPath}/{ServerName}/db/{dbName}";
+        Directory.CreateDirectory(path);
+    }
+
+    public async Task CreateDbConfigFileAsync(string dbName)
+    {
+        string path = $"{_serverPath}/{ServerName}/db/{dbName}/{dbName}.conf";
+        await File.WriteAllTextAsync(path, dbName);
+    }
+
+    public void CreateRecordsFolder(string dbName)
+    {
+        string path = $"{_serverPath}/{ServerName}/db/{dbName}/records";
         Directory.CreateDirectory(path);
     }
 }
