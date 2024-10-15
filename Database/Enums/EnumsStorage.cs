@@ -118,6 +118,7 @@ public static class EnumsStorage
             { "~connect", TcpCommandType.connect },
             { "~close", TcpCommandType.close },
             { "~test", TcpCommandType.test },
+            { "~createdatabase", TcpCommandType.createdatabase },
         };
     
     public static ColumnValueType GetColumnValueType(string lexeme)
