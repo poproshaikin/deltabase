@@ -10,13 +10,16 @@ public class DltTcpListener : DltTcpService
 {
     private TcpListener _listener;
     
+    public IPAddress LocalAddress { get; private set; }
+    public ushort LocalPort { get; private set; }
+    
     /// <summary>
     /// Initializes a new instance of the <see cref="DltTcpListener"/> class, using the specified connection configuration.
     /// </summary>
     /// <param name="cnnConfig">The connection configuration used to initialize the listener, which includes the IP address and port.</param>
     public DltTcpListener(DltConnectionConfig cnnConfig) : base(cnnConfig)
     {
-        _listener = new TcpListener(IPAddress.Parse(cnnConfig.Address), cnnConfig.Port);
+        _listener = new TcpListener(IPAddress.Loopback, cnnConfig.Port);
     }
     
     /// <summary>
