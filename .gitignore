@@ -26,3 +26,6 @@ Database/Server/Server.Core/obj
 
 Database/EntryPoint/bin
 Database/EntryPoint/obj
+
+ClientLibrary/Deltabase.Driver/bin
+ClientLibrary/Deltabase.Driver/obj
