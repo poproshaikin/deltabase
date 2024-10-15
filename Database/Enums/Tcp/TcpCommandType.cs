@@ -6,4 +6,6 @@ public enum TcpCommandType
     sql     = 2,
     test    = 3,
     close   = 4,
+    
+    createdatabase = 5,
 }

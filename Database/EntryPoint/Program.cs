@@ -11,10 +11,15 @@ class Program
 
         string command = args[0];
 
-        if (command == "startserver")
+        if (command == "startserver")  // startserver <serverName>
         {
             Logger.Log("executing \"startserver\" command");
-            DltServer server = DltServer.Init(args[1]);
+            DltServer server = new(args[1]);
+            server.Start();
+        }
+        else if (command == "createserver") // createserver <serverName> <serverPort> <serverPassword>
+        {
+            DltServer server = DltServer.Create(args[1], ushort.Parse(args[2]), args[3]);
             server.Start();
         }
     }
