@@ -46,6 +46,13 @@ public class DltConnectionConfig
         Port = port;
         Password = password;
     }
+
+    private DltConnectionConfig(string server, ushort port, string password)
+    {
+        Server = server;
+        Port = port;
+        Password = password;
+    }
     
     /// <summary>
     /// Initializes a new instance of the <see cref="DltConnectionConfig"/> class with the specified server, database, address, port, and password.
@@ -99,6 +106,7 @@ public class DltConnectionConfig
     {
         return lines.Length switch
         {
+            3 => new DltConnectionConfig(lines[0], Convert.ToUInt16(lines[1]), lines[2]),
             4 => new DltConnectionConfig(lines[0], lines[1], Convert.ToUInt16(lines[2]), lines[3]),
             5 => new DltConnectionConfig(lines[0], lines[1], lines[2], Convert.ToUInt16(lines[3]), lines[4]),
 
