@@ -1,3 +1,4 @@
+using System.Text;
 using Enums;
 using Enums.Tcp;
 using Utils;
@@ -51,7 +52,6 @@ public class TcpRequest
     /// <exception cref="InvalidOperationException">Thrown if the connection string format is invalid.</exception>
     public DltConnectionConfig GetConnectionConfig()
     {
-        string connectionString = Data;
-        return DltConnectionConfig.Parse(connectionString);
+        return DltConnectionConfig.Parse(Data);
     }
 }
