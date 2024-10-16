@@ -113,7 +113,7 @@ public class DltTcpHandler : DltTcpService, IDisposable
     /// Writes a byte array as a message to the client's network stream.
     /// </summary>
     /// <param name="message">The message in bytes to write.</param>
-    public void Write(byte[] message) => Write(ParseHelper.GetString(message));
+    public void Write(byte[] message) => Write(ConvertHelper.GetString(message));
     
     /// <summary>
     /// Writes a predefined TCP response to the client's network stream.
@@ -121,6 +121,8 @@ public class DltTcpHandler : DltTcpService, IDisposable
     /// <param name="response">The <see cref="ResponseType"/> to send as a response.</param>
     public void Write(ResponseType response) => Write(((int)response).ToString());
 
+    public async Task WriteAsync(string message) => await Task.Run(() => Write(message));
+    
     /// <summary>
     /// Asynchronously writes a response of type <see cref="ResponseType"/> by executing the <see cref="Write(ResponseType)"/> method in a separate task.
     /// </summary>
@@ -156,7 +158,9 @@ public class DltTcpHandler : DltTcpService, IDisposable
     // ReSharper disable once MemberCanBePrivate.Global
     public async Task<string> ReadAsync(CancellationToken cancellationToken) =>
         await base.ReadAsync(_currentClient, cancellationToken);
-    
+
+    public void Close() => _currentClient.Close();
+
     /// <summary>
     /// Releases the resources used by the <see cref="DltTcpHandler"/> instance.
     /// </summary>
