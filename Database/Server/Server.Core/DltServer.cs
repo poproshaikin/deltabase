@@ -10,7 +10,7 @@ namespace Server.Core;
 /// </summary>
 public class DltServer
 {
-    private const int connected_clients_limit = 10;
+    private const int connected_clients_limit = 20;
 
     private SemaphoreSlim _semaphore;
     
@@ -19,10 +19,19 @@ public class DltServer
     
     private Dictionary<DltClient, DltDatabase> _clients;
     
+    private string _serverName;
+    private int _port;
+    private string _passwordHashed;
+    
     public DltServer(string serverName)
     {
+        _serverName = serverName;
         _fs = new FileSystemManager(serverName);
+        
         DltConnectionConfig config = DltConnectionConfig.Parse(_fs.ReadServerConnectionConfigFile());
+        _passwordHashed = config.Password;
+        _port = config.Port;
+        
         _listener = new DltTcpListener(config);
         _semaphore = new SemaphoreSlim(initialCount: 1, maxCount: connected_clients_limit);
         _clients = new Dictionary<DltClient, DltDatabase>();
@@ -100,6 +109,11 @@ public class DltServer
                 await ExecuteCreateDatabaseAsync(client, handler, request);
                 return;
             }
+            case TcpCommandType.test:
+            {
+                await ExecuteTestAsync(client, handler, request);
+                return;
+            }
             case TcpCommandType.close:
             {
                 await ExecuteCloseAsync(client, handler, request);
@@ -118,8 +132,7 @@ public class DltServer
     /// <exception cref="InvalidOperationException">Thrown if the specified database is not found.</exception>
     private async Task ExecuteConnectAsync(DltClient client, DltTcpHandler handler, TcpRequest request)
     {
-        // TODO реализовать способы авторизации
-        bool authorized = true;
+        bool authorized = AuthorizeClient(client, request);
                 
         if (authorized)
         {
@@ -136,7 +149,6 @@ public class DltServer
         else
         {
             await handler.WriteAsync(ResponseType.Unauthorized);
-            handler.Dispose();
         }
     }
 
@@ -150,9 +162,7 @@ public class DltServer
     private async Task ExecuteSqlWhenNotAuthorizedAsync(DltClient client, DltTcpHandler handler, TcpRequest request)
     {
         await handler.WriteAsync(ResponseType.Unauthorized);
-        handler.Dispose();
     }
-
     
     /// <summary>
     /// Asynchronously handles SQL request execution, running the provided SQL command and returning the result.
@@ -199,7 +209,30 @@ public class DltServer
         _clients.Remove(client);
 
         await handler.WriteAsync(ResponseType.Success);
+        handler.Close();
         handler.Dispose();
+    }
+
+    private async Task ExecuteTestAsync(DltClient client, DltTcpHandler handler, TcpRequest request)
+    {
+        string response = $"{_serverName}";
+        await handler.WriteAsync(response);
+    }
+
+    private bool AuthorizeClient(DltClient client, TcpRequest request)
+    {
+        DltConnectionConfig config = request.GetConnectionConfig();
+
+        if (_serverName != config.Server)
+            return false;
+
+        if (_port != config.Port)
+            return false;
+
+        if (_passwordHashed != config.Password)
+                return false;
+
+        return true;
     }
 
     /// <summary>
