@@ -8,7 +8,27 @@ public class DltCommand : DbCommand
 {
     private DltConnection _connection;
     private string _commandText;
+    private int _timeout;
 
+    public DltCommand()
+    {
+    }
+
+    public DltCommand(DltConnection connection)
+    {
+        _connection = connection;
+    }
+
+    public DltCommand(string commandText, DltConnection connection) : this(connection)
+    {
+        _commandText = commandText;
+    }
+
+    public DltCommand(string commandText, DltConnection connection, int timeout) : this(commandText, connection)
+    {
+        _timeout = timeout;
+    }
+    
     protected override DbConnection? DbConnection
     {
         get => _connection;
@@ -19,9 +39,15 @@ public class DltCommand : DbCommand
     public override string CommandText
     {
         get => _commandText;
-        set => _commandText = value;
+        set => _commandText = value ?? "";
     }
-    public override int CommandTimeout { get; set; }
+
+    public override int CommandTimeout
+    {
+        get => _timeout;
+        set => _timeout = value;
+    }
+
     public override CommandType CommandType { get; set; }
     public override UpdateRowSource UpdatedRowSource { get; set; }
     protected override DbParameterCollection DbParameterCollection { get; }
