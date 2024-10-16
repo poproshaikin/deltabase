@@ -153,7 +153,7 @@ public class FileSystemManager
 
     public void CreateServerConfigFile(ushort port, string password)
     {
-        string hashedPassword = ParseHelper.Sha256(password);
+        string hashedPassword = ConvertHelper.Sha256(password);
         string path = $"{_serverPath}/{ServerName}.{EnumsStorage.GetExtensionString(FileExtension.CONF)}";
         File.WriteAllLines(path, [ServerName, port.ToString(), hashedPassword]);
     }
