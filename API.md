@@ -41,15 +41,12 @@ To interact with **Deltabase** you can use [**Tcp**](#tcp) protocol or
 ### Abbreviated response codes
 
 > >**1** - Connected successfully  
-> >**2** - Database name isn't specified  
-> >**3** - Server doesn't exist  
-> >**4** - Database doesn't exist  
-> >**5** - User doesn't exist  
-> >**6** - Invalid password  
-> >**7** - Unauthorized  
-> >**8** - Invalid SQL  
-> >**9** - Success  
-> >**10** - Internal server error
+> >**2** - Database name isn't specified
+> >**3** - Invalid password  
+> >**4** - Unauthorized  
+> >**5** - Success  
+> >**6** - Internal server error  
+> >**7** - No available slots for new connections.
 > 
 > >**100** - A passed query has invalid SQL syntax  
 > >**101** - Invalid passed value type    
