@@ -62,7 +62,7 @@ public class DltDatabase
         {
             if (_validator.IsInvalid(command, out ResponseType error))
             {
-                return ParseHelper.GetBytes(error);
+                return ConvertHelper.GetBytes(error);
             }
             
             return command switch
@@ -79,7 +79,7 @@ public class DltDatabase
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            return ParseHelper.GetBytes(ResponseType.InternalServerError);
+            return ConvertHelper.GetBytes(ResponseType.InternalServerError);
         }
     }
 
@@ -95,7 +95,7 @@ public class DltDatabase
 
         if (!_fs.ExistsRecord(dbName: Name, select.TableName))
         {
-            return ParseHelper.GetBytes(ResponseType.TableDoesntExist);
+            return ConvertHelper.GetBytes(ResponseType.TableDoesntExist);
         }
         
         if (select.Condition is null)
@@ -151,7 +151,7 @@ public class DltDatabase
             }
             else if (!_helper.IsPassedPkValueValid(read, insert))
             {
-                return ParseHelper.GetBytes(ResponseType.PassedPkValueIsntUnique);
+                return ConvertHelper.GetBytes(ResponseType.PassedPkValueIsntUnique);
             }
         }
 
@@ -174,7 +174,7 @@ public class DltDatabase
         RecordRow rowToWrite = new RecordRow(valuesInRightOrder);
         writer.Write(read, newRow: rowToWrite);
         
-        return ParseHelper.GetBytes(ResponseType.Success);
+        return ConvertHelper.GetBytes(ResponseType.Success);
     }
 
     /// <summary>
@@ -196,7 +196,7 @@ public class DltDatabase
             int columnId = read.GetColumnId(columnName);
 
             if (!_helper.IsPassedValueTypeValid(assignment.RightOperand, read.Columns[columnId]))
-                return ParseHelper.GetBytes(ResponseType.InvalidPassedValueType);
+                return ConvertHelper.GetBytes(ResponseType.InvalidPassedValueType);
             
             foreach (RecordRow row in read.Rows)
             {
@@ -210,7 +210,7 @@ public class DltDatabase
         RecordsWriter writer = new(_fs, dbName: Name);
         writer.Write(read);
 
-        return ParseHelper.GetBytes(ResponseType.Success);
+        return ConvertHelper.GetBytes(ResponseType.Success);
     }
     
     /// <summary>
@@ -251,14 +251,14 @@ public class DltDatabase
         }
 
         writer.Write(read);
-        return ParseHelper.GetBytes(ResponseType.Success);
+        return ConvertHelper.GetBytes(ResponseType.Success);
     }
     
     private byte[] ExecuteCreate(CreateTableQuery create)
     {
         if (_fs.ExistsRecord(dbName: Name, create.TableName))
         {
-            return ParseHelper.GetBytes(ResponseType.TableAlreadyExists);
+            return ConvertHelper.GetBytes(ResponseType.TableAlreadyExists);
         }
 
         _fs.CreateRecordFolder(dbName: Name, create.TableName);
@@ -270,6 +270,6 @@ public class DltDatabase
             _fs.WriteToRecordFileAsync(dbName: Name, create.TableName, FileExtension.RECORD, recordRows)
         );
         
-        return ParseHelper.GetBytes(ResponseType.Success);
+        return ConvertHelper.GetBytes(ResponseType.Success);
     }
 }
