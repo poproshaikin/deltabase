@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using Enums.Exceptions;
 using Enums.FileSystem;
 using Enums.Records.Columns;
 using Enums.Tcp;
@@ -12,8 +13,10 @@ public static class ConvertHelper
     
     public static byte[] GetBytes(ResponseType type) => GetBytes(((int)type).ToString());
     
+    public static byte[] GetBytes(ErrorType error) => GetBytes(((int)error).ToString());
+    
     public static string GetString(byte[] buffer) => Encoding.UTF8.GetString(buffer);
-
+    
     public static string Sha256(string input)
     {
         byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes(input));

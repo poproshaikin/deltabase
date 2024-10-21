@@ -1,14 +1,10 @@
-using Sql.Tokens;
+using Sql.Expressions;
 
 namespace Sql.Queries;
 
-public class InsertQuery : SqlQuery, IQueryWithPassedColumns, IQueryWithPassedValues, IQueryWithTableName
+public class InsertQuery : SqlQuery
 {
-    public SqlToken TableName { get; init; }
-    public SqlToken[] PassedColumns { get; set; }
-    public SqlToken[] PassedValues { get; set; }
-
-    public InsertQuery(IReadOnlyList<SqlToken> tokens) : base(tokens)
-    {
-    }
+    public IntoExpr Into { get; set; }
+    
+    public ValuesExpr[] Values { get; init; }
 }

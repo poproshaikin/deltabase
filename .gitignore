@@ -6,8 +6,8 @@ Database/Utils/obj
 Database/Db/Db.Core/bin
 Database/Db/Db.Core/obj
 
-Database/Db/Db.Records/bin
-Database/Db/Db.Records/obj
+Database/Db/Db.DataStorage/bin
+Database/Db/Db.DataStorage/obj
 
 Database/Db/Sql/bin
 Database/Db/Sql/obj

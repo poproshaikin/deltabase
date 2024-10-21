@@ -1,17 +1,12 @@
 using Sql.Expressions;
-using Sql.Tokens;
 
 namespace Sql.Queries;
 
-public class SelectQuery : SqlQuery, IQueryWithPassedColumns, IQueryWithTableName, IQueryWithCondition
+public class SelectQuery : SqlQuery, IValidatedQuery, IParsedQuery
 {
-    public SqlToken TableName { get; init; }
-    public bool SelectAllColumns { get; init; }
-    public SqlToken[] PassedColumns { get; set; }
+    public SelectExpr Select { get; private set; }
+    public FromExpr From { get; private set; }
     
-    public ConditionGroup? Condition { get; init; }
-
-    public SelectQuery(IReadOnlyList<SqlToken> tokens) : base(tokens)
-    {
-    }
+    public ConditionGroup? Condition { get; init; }         
+    public LimitExpr? Limit { get; init; }  
 }

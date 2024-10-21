@@ -76,6 +76,10 @@ public enum ResponseType
     /// Clients should ensure that their SQL queries are within permissible limits.
     /// </summary>
     InvalidQueryLength,
+    
+    InvalidExpression,
+    
+    InvalidPassedColumns,
 
     /// <summary>
     /// Indicates that the table already exists in the database.
@@ -111,5 +115,5 @@ public enum ResponseType
     /// Indicates that the primary key value passed is not unique.
     /// Clients should ensure that primary key values are unique before insertion.
     /// </summary>
-    PassedPkValueIsntUnique = 300
+    PassedPkValueIsntUnique = 300,
 }

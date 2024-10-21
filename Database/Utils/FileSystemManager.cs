@@ -78,7 +78,14 @@ public class FileSystemManager
         string path = GetRecordFilePath(dbName, recordName, extension);
         return await File.ReadAllLinesAsync(path);
     }
-
+    
+    public async Task<string[]> ReadRecordFileAsync(string dbName, string recordName, string columnName)
+    {
+        string path =
+            $"{_serverPath}/{ServerName}/db/{dbName}/records/{recordName}/{columnName}.{EnumsStorage.GetExtensionString(FileExtension.RECORD)}";
+        return await File.ReadAllLinesAsync(path);
+    }
+    
     /// <summary>
     /// Reads the specified record file and returns its contents as an array of strings.
     /// </summary>
@@ -192,4 +199,6 @@ public class FileSystemManager
         string path = $"{_serverPath}/{ServerName}/db/{dbName}/records";
         Directory.CreateDirectory(path);
     }
+
+    public string GetRecordsFolderPath(string dbName) => $"{_serverPath}/{ServerName}/db/{dbName}/records";
 }
