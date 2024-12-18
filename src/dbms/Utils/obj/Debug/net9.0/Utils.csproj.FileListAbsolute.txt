@@ -1,0 +1,16 @@
+D:\Soft Dev\С#\deltabase\bin\Debug\net9.0\utils_lib.deps.json
+D:\Soft Dev\С#\deltabase\bin\Debug\net9.0\utils_lib.dll
+D:\Soft Dev\С#\deltabase\bin\Debug\net9.0\utils_lib.pdb
+D:\Soft Dev\С#\deltabase\src\dbms\Utils\obj\Debug\net9.0\Utils.csproj.AssemblyReference.cache
+D:\Soft Dev\С#\deltabase\src\dbms\Utils\obj\Debug\net9.0\Utils.GeneratedMSBuildEditorConfig.editorconfig
+D:\Soft Dev\С#\deltabase\src\dbms\Utils\obj\Debug\net9.0\Utils.AssemblyInfoInputs.cache
+D:\Soft Dev\С#\deltabase\src\dbms\Utils\obj\Debug\net9.0\Utils.AssemblyInfo.cs
+D:\Soft Dev\С#\deltabase\src\dbms\Utils\obj\Debug\net9.0\Utils.csproj.CoreCompileInputs.cache
+D:\Soft Dev\С#\deltabase\src\dbms\Utils\obj\Debug\net9.0\Utils.csproj.Up2Date
+D:\Soft Dev\С#\deltabase\src\dbms\Utils\obj\Debug\net9.0\utils_lib.dll
+D:\Soft Dev\С#\deltabase\src\dbms\Utils\obj\Debug\net9.0\refint\utils_lib.dll
+D:\Soft Dev\С#\deltabase\src\dbms\Utils\obj\Debug\net9.0\utils_lib.pdb
+D:\Soft Dev\С#\deltabase\src\dbms\Utils\obj\Debug\net9.0\ref\utils_lib.dll
+D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\utils_lib.deps.json
+D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\utils_lib.dll
+D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\utils_lib.pdb

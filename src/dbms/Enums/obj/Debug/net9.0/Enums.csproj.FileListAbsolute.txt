@@ -1,0 +1,14 @@
+D:\Soft Dev\С#\deltabase\bin\Debug\net9.0\enums_lib.deps.json
+D:\Soft Dev\С#\deltabase\bin\Debug\net9.0\enums_lib.dll
+D:\Soft Dev\С#\deltabase\bin\Debug\net9.0\enums_lib.pdb
+D:\Soft Dev\С#\deltabase\src\dbms\Enums\obj\Debug\net9.0\Enums.GeneratedMSBuildEditorConfig.editorconfig
+D:\Soft Dev\С#\deltabase\src\dbms\Enums\obj\Debug\net9.0\Enums.AssemblyInfoInputs.cache
+D:\Soft Dev\С#\deltabase\src\dbms\Enums\obj\Debug\net9.0\Enums.AssemblyInfo.cs
+D:\Soft Dev\С#\deltabase\src\dbms\Enums\obj\Debug\net9.0\Enums.csproj.CoreCompileInputs.cache
+D:\Soft Dev\С#\deltabase\src\dbms\Enums\obj\Debug\net9.0\enums_lib.dll
+D:\Soft Dev\С#\deltabase\src\dbms\Enums\obj\Debug\net9.0\refint\enums_lib.dll
+D:\Soft Dev\С#\deltabase\src\dbms\Enums\obj\Debug\net9.0\enums_lib.pdb
+D:\Soft Dev\С#\deltabase\src\dbms\Enums\obj\Debug\net9.0\ref\enums_lib.dll
+D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\enums_lib.deps.json
+D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\enums_lib.dll
+D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\enums_lib.pdb

@@ -1,0 +1,16 @@
+D:\Soft Dev\С#\deltabase\bin\Debug\net9.0\dlt_server_lib.deps.json
+D:\Soft Dev\С#\deltabase\bin\Debug\net9.0\dlt_server_lib.dll
+D:\Soft Dev\С#\deltabase\bin\Debug\net9.0\dlt_server_lib.pdb
+D:\Soft Dev\С#\deltabase\src\dbms\Server\Server.Core\obj\Debug\net9.0\Server.Core.csproj.AssemblyReference.cache
+D:\Soft Dev\С#\deltabase\src\dbms\Server\Server.Core\obj\Debug\net9.0\Server.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\Soft Dev\С#\deltabase\src\dbms\Server\Server.Core\obj\Debug\net9.0\Server.Core.AssemblyInfoInputs.cache
+D:\Soft Dev\С#\deltabase\src\dbms\Server\Server.Core\obj\Debug\net9.0\Server.Core.AssemblyInfo.cs
+D:\Soft Dev\С#\deltabase\src\dbms\Server\Server.Core\obj\Debug\net9.0\Server.Core.csproj.CoreCompileInputs.cache
+D:\Soft Dev\С#\deltabase\src\dbms\Server\Server.Core\obj\Debug\net9.0\Server.C.511BE109.Up2Date
+D:\Soft Dev\С#\deltabase\src\dbms\Server\Server.Core\obj\Debug\net9.0\dlt_server_lib.dll
+D:\Soft Dev\С#\deltabase\src\dbms\Server\Server.Core\obj\Debug\net9.0\refint\dlt_server_lib.dll
+D:\Soft Dev\С#\deltabase\src\dbms\Server\Server.Core\obj\Debug\net9.0\dlt_server_lib.pdb
+D:\Soft Dev\С#\deltabase\src\dbms\Server\Server.Core\obj\Debug\net9.0\ref\dlt_server_lib.dll
+D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\dlt_server_lib.deps.json
+D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\dlt_server_lib.dll
+D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\dlt_server_lib.pdb

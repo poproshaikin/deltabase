@@ -1,0 +1,514 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Server\\Server.Core\\Server.Core.csproj": {}
+  },
+  "projects": {
+    "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj",
+        "projectName": "enums_lib",
+        "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj",
+        "packagesPath": "C:\\Users\\Stanislav\\.nuget\\packages\\",
+        "outputPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Stanislav\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "all"
+        }
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100-preview.7.24407.12/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Exceptions\\Exceptions.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Exceptions\\Exceptions.csproj",
+        "projectName": "exceptions_lib",
+        "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Exceptions\\Exceptions.csproj",
+        "packagesPath": "C:\\Users\\Stanislav\\.nuget\\packages\\",
+        "outputPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Exceptions\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Stanislav\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "all"
+        }
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100-preview.7.24407.12/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Network\\Network.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Network\\Network.csproj",
+        "projectName": "network",
+        "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Network\\Network.csproj",
+        "packagesPath": "C:\\Users\\Stanislav\\.nuget\\packages\\",
+        "outputPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Network\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Stanislav\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj"
+              },
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Utils\\Utils.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Utils\\Utils.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "all"
+        }
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100-preview.7.24407.12/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Server\\Server.Core\\Server.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Server\\Server.Core\\Server.Core.csproj",
+        "projectName": "dlt_server_lib",
+        "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Server\\Server.Core\\Server.Core.csproj",
+        "packagesPath": "C:\\Users\\Stanislav\\.nuget\\packages\\",
+        "outputPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Server\\Server.Core\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Stanislav\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj"
+              },
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Exceptions\\Exceptions.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Exceptions\\Exceptions.csproj"
+              },
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Network\\Network.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Network\\Network.csproj"
+              },
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Sql\\Sql.Shared\\Sql.Shared.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Sql\\Sql.Shared\\Sql.Shared.csproj"
+              },
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Utils\\Utils.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Utils\\Utils.csproj"
+              },
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Workers\\Workers.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Workers\\Workers.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "all"
+        }
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100-preview.7.24407.12/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Sql\\Sql.Shared\\Sql.Shared.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Sql\\Sql.Shared\\Sql.Shared.csproj",
+        "projectName": "sql_shared_lib",
+        "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Sql\\Sql.Shared\\Sql.Shared.csproj",
+        "packagesPath": "C:\\Users\\Stanislav\\.nuget\\packages\\",
+        "outputPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Sql\\Sql.Shared\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Stanislav\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj"
+              },
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Exceptions\\Exceptions.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Exceptions\\Exceptions.csproj"
+              },
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Utils\\Utils.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Utils\\Utils.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "all"
+        }
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100-preview.7.24407.12/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Utils\\Utils.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Utils\\Utils.csproj",
+        "projectName": "utils_lib",
+        "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Utils\\Utils.csproj",
+        "packagesPath": "C:\\Users\\Stanislav\\.nuget\\packages\\",
+        "outputPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Utils\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Stanislav\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Enums\\Enums.csproj"
+              },
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Exceptions\\Exceptions.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Exceptions\\Exceptions.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "all"
+        }
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100-preview.7.24407.12/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Workers\\Workers.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Workers\\Workers.csproj",
+        "projectName": "workers_lib",
+        "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Workers\\Workers.csproj",
+        "packagesPath": "C:\\Users\\Stanislav\\.nuget\\packages\\",
+        "outputPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Workers\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Stanislav\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Sql\\Sql.Shared\\Sql.Shared.csproj": {
+                "projectPath": "D:\\Soft Dev\\С#\\deltabase\\src\\dbms\\Sql\\Sql.Shared\\Sql.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "all"
+        }
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100-preview.7.24407.12/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
