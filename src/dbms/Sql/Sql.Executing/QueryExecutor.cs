@@ -53,11 +53,11 @@ public class QueryExecutor
 
     private ExecutionResult ExecuteSelect(SelectQuery query)
     {
-        DataReader reader = _provider.CreateReader();
+        DataScanner scanner = _provider.CreateReader();
         DataDefinitor definitor = _provider.CreateDefinitor();
         
         TableScheme tableScheme = definitor.GetTableScheme(query.From.TableName);
-        TableModel read = reader.Read(tableScheme, query.Select.ColumnNames, query.Limit?.Limit, query.Condition);
+        TableModel read = scanner.Read(tableScheme, query.Select.ColumnNames, query.Limit?.Limit, query.Condition);
         
         return new ExecutionResult(
             rowsAffected: read.Rows.Length,
@@ -66,7 +66,7 @@ public class QueryExecutor
 
     private ExecutionResult ExecuteInsert(InsertQuery query)
     {
-        DataWriter writer = _provider.CreateInserter();
+        DataInserter inserter = _provider.CreateInserter();
         DataDefinitor definitor = _provider.CreateDefinitor();
         DataSorter sorter = _provider.CreateSorter();
         
@@ -82,6 +82,5 @@ public class QueryExecutor
     {
         string? encoding = _fs.GetDatabaseSettings(_dbName).Encoding;
         var encoder = IDataEncoder.TryGet(encoding);
-        _provider.SetEncoding(encoder);
     }
 }
