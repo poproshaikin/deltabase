@@ -21,14 +21,14 @@ public class ConditionChecker
         Condition = condition;
     }
 
-    public bool Check(RowModel row)
+    public bool Check(PageRow pageRow)
     {
         List<bool> results = [];
 
         foreach (ConditionExpr subcondition in Condition.Subconditions)
         {
-            string left = ParseOperand(row, subcondition.LeftOperand);
-            string right = ParseOperand(row, subcondition.RightOperand);
+            string left = ParseOperand(pageRow, subcondition.LeftOperand);
+            string right = ParseOperand(pageRow, subcondition.RightOperand);
             
             bool expressionResult = CompareValues(left, right, subcondition.Operator);
             results.Add(expressionResult);
@@ -50,12 +50,12 @@ public class ConditionChecker
         return EvaluateLogicalExpression(results, logicalOperators);
     }
     
-    private string ParseOperand(RowModel row, SqlToken operand)
+    private string ParseOperand(PageRow pageRow, SqlToken operand)
     {
         if (operand.IsType(TokenType.Identifier))
         {
             int columnId = SourceTableScheme.IndexOfColumn(operand);
-            return row.Data[columnId];
+            return pageRow.Data[columnId];
         }
         else
         {
