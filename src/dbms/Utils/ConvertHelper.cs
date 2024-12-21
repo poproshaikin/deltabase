@@ -13,7 +13,7 @@ public static class ConvertHelper
     
     public static byte[] GetBytes(ErrorType error) => GetBytes(((int)error).ToString());
     
-    public static string GetString(byte[] buffer) => Encoding.UTF8.GetString(buffer);
+    public static string GetString(IEnumerable<byte> buffer) => Encoding.UTF8.GetString(buffer.ToArray());
     
     public static string Sha256(string input)
     {

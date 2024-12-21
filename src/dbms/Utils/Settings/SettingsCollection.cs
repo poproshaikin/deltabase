@@ -25,6 +25,11 @@ public class SettingsCollection
         throw new ArgumentOutOfRangeException(nameof(key), $"The key '{key}' was not found in the settings collection.");
     }
 
+    public string? GetOrDefault(string key)
+    {
+        return _settings.FirstOrDefault(s => s.Key == key)?.Value;
+    }
+
     public string[] GetMultiple(string key)
     {
         string value = Get(key);
@@ -87,9 +92,14 @@ public class SettingsCollection
         return new ResponseSettings(_settings);
     }
 
+    public DatabaseSettings ToDatabaseSettings()
+    {
+        return new DatabaseSettings(_settings);
+    }
+
     public override string ToString()
     {
         return _settings.Aggregate(string.Empty, (current, setting) => current + setting.ToString());
     }
-
 }
+

@@ -12,3 +12,4 @@ D:\Soft Dev\С#\deltabase\src\dbms\Enums\obj\Debug\net9.0\ref\enums_lib.dll
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\enums_lib.deps.json
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\enums_lib.dll
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\enums_lib.pdb
+D:\Soft Dev\С#\deltabase\src\dbms\Enums\obj\Debug\net9.0\Enums.sourcelink.json

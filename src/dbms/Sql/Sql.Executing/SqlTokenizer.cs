@@ -3,7 +3,7 @@ using Enums.Sql.Tokens;
 using Sql.Parsing.Shared;
 using Sql.Shared.Tokens;
 
-namespace Sql.Parsing.App;
+namespace Sql.Executing.App;
 
 public class SqlTokenizer
 {

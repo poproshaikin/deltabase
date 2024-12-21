@@ -2,7 +2,6 @@
 using Data.Definitions;
 using Enums;
 using Enums.Sql;
-using Sql.Parsing.App;
 using Sql.Parsing.Shared;
 using Sql.Shared.Execution;
 using Sql.Shared.Queries;
@@ -42,7 +41,7 @@ class Program
             executionResult.ExecutionTime = stopwatch.ElapsedMilliseconds;
         }
 
-        Console.WriteLine(executionResult.Serialize());
+        Console.Out.WriteLine(executionResult.Serialize());
     }
 
     static void SetInput(string[] args)
@@ -50,10 +49,10 @@ class Program
         bool showHelp = args is ["-h"];
         
         if (showHelp) Console.Write("Raw query: ");
-        _rawQuery = Console.ReadLine()!;
+        _rawQuery = Console.In.ReadLine()!;
         if (showHelp) Console.Write("Server name: ");
-        _serverName = Console.ReadLine()!;
-        if (showHelp) Console.Write("Database query: ");
-        _dbName = Console.ReadLine()!;
+        _serverName = Console.In.ReadLine()!;
+        if (showHelp) Console.Write("Database name: ");
+        _dbName = Console.In.ReadLine()!;
     }
 }

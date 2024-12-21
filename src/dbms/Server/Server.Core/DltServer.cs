@@ -29,8 +29,7 @@ public class DltServer
         _serverName = serverName;
         _fs = new FileSystemHelper(serverName);
 
-        _serverSettings = SettingsHelper.Parse(File.ReadAllText(_fs.GetServerConfPath()))
-            .ToServerSettings();
+        _serverSettings = _fs.GetServerSettings();
             
         _semaphore = new SemaphoreSlim(connected_clients_limit);
         _auth = new AuthService(TimeSpan.FromMinutes(session_lifetime_minutes));

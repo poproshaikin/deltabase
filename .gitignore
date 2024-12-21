@@ -1,3 +1,4 @@
 .idea
 bin
 deltabase.sln.DotSettings.user
+**/obj/

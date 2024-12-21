@@ -14,3 +14,4 @@ D:\Soft Dev\С#\deltabase\src\dbms\Sql\Sql.Shared\obj\Debug\net9.0\ref\sql_share
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\sql_shared_lib.deps.json
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\sql_shared_lib.dll
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\sql_shared_lib.pdb
+D:\Soft Dev\С#\deltabase\src\dbms\Sql\Sql.Shared\obj\Debug\net9.0\Sql.Shared.sourcelink.json

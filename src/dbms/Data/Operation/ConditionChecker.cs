@@ -7,7 +7,7 @@ using Exceptions;
 using Sql.Shared.Expressions;
 using Sql.Shared.Tokens;
 
-namespace Data.Core;
+namespace Data.Operation;
 
 public class ConditionChecker
 {

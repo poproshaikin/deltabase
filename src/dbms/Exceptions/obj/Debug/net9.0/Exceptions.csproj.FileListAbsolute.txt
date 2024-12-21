@@ -19,3 +19,4 @@ D:\Soft Dev\С#\deltabase\src\dbms\Exceptions\obj\Debug\net9.0\ref\exceptions_li
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\exceptions_lib.deps.json
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\exceptions_lib.dll
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\exceptions_lib.pdb
+D:\Soft Dev\С#\deltabase\src\dbms\Exceptions\obj\Debug\net9.0\Exceptions.sourcelink.json

@@ -14,3 +14,4 @@ D:\Soft Dev\С#\deltabase\src\dbms\Workers\obj\Debug\net9.0\ref\workers_lib.dll
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\workers_lib.deps.json
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\workers_lib.dll
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\workers_lib.pdb
+D:\Soft Dev\С#\deltabase\src\dbms\Workers\obj\Debug\net9.0\Workers.sourcelink.json

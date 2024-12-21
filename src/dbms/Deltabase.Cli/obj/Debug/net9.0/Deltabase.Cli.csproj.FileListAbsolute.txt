@@ -19,3 +19,4 @@ D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\dlt_cli.deps.json
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\dlt_cli.runtimeconfig.json
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\dlt_cli.dll
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\dlt_cli.pdb
+D:\Soft Dev\С#\deltabase\src\dbms\Deltabase.Cli\obj\Debug\net9.0\Deltabase.Cli.sourcelink.json

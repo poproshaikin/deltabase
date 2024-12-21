@@ -52,7 +52,7 @@ public class ExecutionResult
 
     private string SerializeDataSet()
     {
-        return string.Join('\r', DataSet!);
+        return string.Join("\r\n", DataSet!);
     }
 
     public ResponseSettings ToResponseSettings()

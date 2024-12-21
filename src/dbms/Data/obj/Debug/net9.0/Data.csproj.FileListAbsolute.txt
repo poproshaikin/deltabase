@@ -14,3 +14,4 @@ D:\Soft Dev\С#\deltabase\src\dbms\Data\obj\Debug\net9.0\ref\data_lib.dll
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\data_lib.deps.json
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\data_lib.dll
 D:\Soft Dev\С#\deltabase\bin\dbms\Debug\net9.0\data_lib.pdb
+D:\Soft Dev\С#\deltabase\src\dbms\Data\obj\Debug\net9.0\Data.sourcelink.json

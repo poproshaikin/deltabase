@@ -1,7 +1,9 @@
-using Data.Core;
 using Data.Definitions;
 using Data.Definitions.Schemes;
+using Data.Encoding;
 using Data.Models;
+using Data.Operation;
+using Data.Operation.IO;
 using Enums.Sql;
 using Exceptions;
 using Sql.Shared.Execution;
@@ -13,14 +15,19 @@ namespace Sql.Executing.App;
 public class QueryExecutor
 {
     private string _dbName;
+    
     private FileSystemHelper _fs;
+    
+    private DataServiceProvider _provider;
     
     public QueryExecutor(string dbName, FileSystemHelper fs)
     {
         _dbName = dbName;
         _fs = fs;
+        _provider = new DataServiceProvider(dbName, fs, FileAccess.Read);
+        InitEncoder();
     }
-    
+
     /// <summary>
     /// Executes a given SQL command based on its type.
     /// </summary>
@@ -46,8 +53,8 @@ public class QueryExecutor
 
     private ExecutionResult ExecuteSelect(SelectQuery query)
     {
-        using DataReader reader = new DataReader(_dbName, _fs);
-        DataDefinitor definitor = new DataDefinitor(_dbName, _fs);
+        DataReader reader = _provider.CreateReader();
+        DataDefinitor definitor = _provider.CreateDefinitor();
         
         TableScheme tableScheme = definitor.GetTableScheme(query.From.TableName);
         TableModel read = reader.Read(tableScheme, query.Select.ColumnNames, query.Limit?.Limit, query.Condition);
@@ -59,6 +66,22 @@ public class QueryExecutor
 
     private ExecutionResult ExecuteInsert(InsertQuery query)
     {
+        DataWriter writer = _provider.CreateInserter();
+        DataDefinitor definitor = _provider.CreateDefinitor();
+        DataSorter sorter = _provider.CreateSorter();
+        
+        string tableName = query.Insert.TableName;
+        _provider.SetStreamAccess(FileAccess.ReadWrite, tableName);
+        
+        // if (sorter.NeedsSorting)
+
         throw new NotImplementedException();
+    }
+
+    private void InitEncoder()
+    {
+        string? encoding = _fs.GetDatabaseSettings(_dbName).Encoding;
+        var encoder = IDataEncoder.TryGet(encoding);
+        _provider.SetEncoding(encoder);
     }
 }

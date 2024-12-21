@@ -19,4 +19,5 @@ public enum ErrorType
     InvalidLogicalOperatorInCondition = 13,
     UnsupportedTransportProtocol = 14,
     MissingServerConfigSetting = 15,
+    InternalServerError
 }

@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Enums;
 using Enums.FileSystem;
+using Utils.Settings;
 
 namespace Utils;
 
@@ -161,6 +162,18 @@ public class FileSystemHelper
     {
         string path = $"{_serverPath}/{ServerName}";
         Directory.CreateDirectory(path);
+    }
+
+    public ServerSettings GetServerSettings()
+    {
+        return SettingsHelper.Parse(File.ReadAllText(GetServerConfPath()))
+            .ToServerSettings();
+    }
+    
+    public DatabaseSettings GetDatabaseSettings(string dbName)
+    {
+        return SettingsHelper.Parse(File.ReadAllText(GetDatabaseConfPath(dbName)))
+            .ToDatabaseSettings();
     }
 
     public void CreateServerConfigFile(ushort port, string password)
