@@ -12,11 +12,6 @@ public class DataServiceProvider
     private FileSystemHelper _fs;
 
     private FileStreamPool _pool;
-
-
-    private bool _encoding => _encoder is not null;
-    
-    private IDataEncoder? _encoder;
     
     public DataServiceProvider(string dbName, FileSystemHelper fs, FileAccess poolAccess)
     {
@@ -25,24 +20,19 @@ public class DataServiceProvider
         _pool = new FileStreamPool(poolAccess);
     }
 
-    public void SetEncoding(IDataEncoder? encoder)
-    {
-        _encoder = encoder;
-    }
-
     public DataDefinitor CreateDefinitor()
     {
         return new DataDefinitor(_dbName, _fs);
     }
 
-    public DataReader CreateReader()
+    public DataScanner CreateReader()
     {
-        return new DataReader(_dbName, _fs, _pool, CreateDefinitor(), _encoder);
+        return new DataScanner(_dbName, _fs, _pool, CreateDefinitor());
     }
 
-    public DataWriter CreateInserter()
+    public DataInserter CreateInserter()
     {
-        return new DataWriter(_dbName, _fs, _pool, CreateDefinitor(), _encoder);
+        return new DataInserter(_dbName, _fs, _pool, CreateDefinitor());
     }
 
     public DataSorter CreateSorter()
