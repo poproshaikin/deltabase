@@ -1,12 +1,12 @@
 namespace Data.Definitions.Schemes;
 
-public class PageHeader
+internal struct PageHeader
 {
-    public int PageId { get; set; }
-    public int RowsCount { get; set; }
-    public int[]? FreeRows { get; set; }
+    internal int PageId { get; set; }
+    internal int RowsCount { get; set; }
+    internal int[]? FreeRows { get; set; }
 
-    public PageHeader(int pageId, int rowsCount, int[]? freeRows)
+    internal PageHeader(int pageId, int rowsCount, int[]? freeRows)
     {
         PageId = pageId;
         RowsCount = rowsCount;

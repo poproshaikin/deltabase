@@ -6,9 +6,9 @@ namespace Data.Models;
 public class TableModel
 {
     public TableScheme Scheme { get; set; }
-    public RowModel[] Rows { get; set; }
+    public PageRow[] Rows { get; set; }
 
-    public TableModel(TableScheme scheme, params RowModel[] rows)
+    public TableModel(TableScheme scheme, params PageRow[] rows)
     {
         Scheme = scheme;
         Rows = rows;
