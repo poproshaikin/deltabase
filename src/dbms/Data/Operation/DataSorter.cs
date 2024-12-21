@@ -12,8 +12,7 @@ public class DataSorter : DataManipulator
         DataDefinitor definition) : base(dbName,
         fs,
         pool,
-        definition,
-        encoder: null)
+        definition)
     {
     }
     
