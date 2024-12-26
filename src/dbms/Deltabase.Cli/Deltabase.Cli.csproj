@@ -7,6 +7,8 @@
         <Nullable>enable</Nullable>
         <OutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)bin/dbms/Debug/</OutputPath>
         <OutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)bin/dbms/Release/</OutputPath>
+        <IntermediateOutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)obj/dbms/Debug/Deltabase.Cli/</IntermediateOutputPath>
+        <IntermediateOutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)obj/dbms/Release/Deltabase.Cli</IntermediateOutputPath>
         <AssemblyName>dlt_cli</AssemblyName>
     </PropertyGroup>
 

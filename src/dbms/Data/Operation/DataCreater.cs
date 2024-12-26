@@ -4,9 +4,9 @@ using Utils;
 
 namespace Data.Operation;
 
-public class DataSorter : DataManipulator
+public class DataCreater : DataManipulator
 {
-    internal DataSorter(string dbName,
+    internal DataCreater(string dbName,
         FileSystemHelper fs,
         FileStreamPool pool,
         DataDefinitor definitor) : base(dbName,

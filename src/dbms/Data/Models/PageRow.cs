@@ -1,19 +1,20 @@
+using Enums.Records.Columns;
+
 namespace Data.Models;
 
 public class PageRow
 {
     internal int RId { get; set; }
     
-    public string[] Data { get; set; }
+    public object[] Data { get; set; }
 
     public int ColumnsCount => Data.Length;
     
-    // Including the position for a columns count
-    internal int ValuesCount => Data.Length + 1; 
+    internal int ValuesCount => Data.Length; 
     
-    public string this[int index] => Data[index];
+    public object this[int index] => Data[index];
 
-    internal PageRow(int rid, string[] data)
+    public PageRow(int rid, object[] data)
     {
         RId = rid;
         Data = data;

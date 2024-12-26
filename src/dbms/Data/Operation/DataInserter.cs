@@ -4,9 +4,9 @@ using Utils;
 
 namespace Data.Operation;
 
-public class DataSorter : DataManipulator
+public class DataInserter : DataManipulator
 {
-    internal DataSorter(string dbName,
+    internal DataInserter(string dbName,
         FileSystemHelper fs,
         FileStreamPool pool,
         DataDefinitor definitor) : base(dbName,
@@ -15,6 +15,4 @@ public class DataSorter : DataManipulator
         definitor)
     {
     }
-    
-    
 }

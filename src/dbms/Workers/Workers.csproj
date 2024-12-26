@@ -6,6 +6,8 @@
         <Nullable>enable</Nullable>
         <OutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)bin/dbms/Debug/</OutputPath>
         <OutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)bin/dbms/Release/</OutputPath>
+        <IntermediateOutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)obj/dbms/Debug/Workers</IntermediateOutputPath>
+        <IntermediateOutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)obj/dbms/Release/Workers</IntermediateOutputPath>
         <AssemblyName>workers_lib</AssemblyName>
     </PropertyGroup>
 

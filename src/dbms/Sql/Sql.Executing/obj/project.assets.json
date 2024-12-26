@@ -14,7 +14,10 @@
         },
         "runtime": {
           "bin/placeholder/data_lib.dll": {}
-        }
+        },
+        "frameworkReferences": [
+          "Microsoft.NETCore.App"
+        ]
       },
       "enums_lib/1.0.0": {
         "type": "project",
@@ -158,7 +161,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "all"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net9.0": {

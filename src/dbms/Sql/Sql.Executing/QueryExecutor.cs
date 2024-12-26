@@ -1,10 +1,8 @@
 using Data.Definitions;
 using Data.Definitions.Schemes;
-using Data.Encoding;
 using Data.Models;
 using Data.Operation;
 using Data.Operation.IO;
-using Enums.Sql;
 using Exceptions;
 using Sql.Shared.Execution;
 using Sql.Shared.Queries;
@@ -25,7 +23,6 @@ public class QueryExecutor
         _dbName = dbName;
         _fs = fs;
         _provider = new DataServiceProvider(dbName, fs, FileAccess.Read);
-        InitEncoder();
     }
 
     /// <summary>
@@ -76,11 +73,5 @@ public class QueryExecutor
         // if (sorter.NeedsSorting)
 
         throw new NotImplementedException();
-    }
-
-    private void InitEncoder()
-    {
-        string? encoding = _fs.GetDatabaseSettings(_dbName).Encoding;
-        var encoder = IDataEncoder.TryGet(encoding);
     }
 }

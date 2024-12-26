@@ -6,12 +6,17 @@
         <Nullable>enable</Nullable>
         <OutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)bin/dbms/Debug/</OutputPath>
         <OutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)bin/dbms/Release/</OutputPath>
+        <IntermediateOutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)obj/dbms/Debug/Data</IntermediateOutputPath>
+        <IntermediateOutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)obj/dbms/Release/Data</IntermediateOutputPath>
+        <BaseIntermediateOutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)obj/dbms/Debug/Data</BaseIntermediateOutputPath>
+        <BaseIntermediateOutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)obj/dbms/Release/Data</BaseIntermediateOutputPath>
         <AssemblyName>data_lib</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Sql\Sql.Shared\Sql.Shared.csproj" />
       <ProjectReference Include="..\Utils\Utils.csproj" />
+        <FrameworkReference Include="Microsoft.NETCore.App" />
     </ItemGroup>
 
 </Project>

@@ -6,6 +6,8 @@
         <Nullable>enable</Nullable>
         <OutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)bin/dbms/Debug/</OutputPath>
         <OutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)bin/dbms/Release/</OutputPath>
+        <IntermediateOutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)obj/dbms/Debug/Utils/</IntermediateOutputPath>
+        <IntermediateOutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)obj/dbms/Release/Utils</IntermediateOutputPath>
         <AssemblyName>utils_lib</AssemblyName>
     </PropertyGroup>
 

@@ -17,11 +17,11 @@ public class FileSystemHelper
     /// Gets the name of the server managing the file system.
     /// </summary>
     public string ServerName { get; private set; }
-    
+
     /// <summary>
     /// Gets the base server path of the executing assembly's location.
     /// </summary>
-    private readonly string _serverPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+    private string _serverPath;
     
     /// <summary>
     /// Initializes a new instance of the <see cref="FileSystemHelper"/> class.
@@ -30,8 +30,15 @@ public class FileSystemHelper
     public FileSystemHelper(string serverName)
     {
         ServerName = serverName;
+        _serverPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
     }
 
+    public FileSystemHelper(string serverName, string serverPath)
+    {
+        ServerName = serverName;
+        _serverPath = serverPath;
+    }
+    
     /// <summary>
     /// Gets the full file system path to the folder of the specified database.
     /// </summary>
