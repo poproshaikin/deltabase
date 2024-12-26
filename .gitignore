@@ -1,0 +1,10 @@
+.idea
+*sln.DotSettings*
+
+/bin/
+/obj/g
+
+**/bin/*
+**/obj/*
+
+Tessts

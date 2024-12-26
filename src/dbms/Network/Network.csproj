@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <OutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)bin/dbms/Debug/</OutputPath>
+        <OutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)bin/dbms/Release/</OutputPath>
+        <AssemblyName>network</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Enums\Enums.csproj" />
+      <ProjectReference Include="..\Utils\Utils.csproj" />
+    </ItemGroup>
+
+</Project>

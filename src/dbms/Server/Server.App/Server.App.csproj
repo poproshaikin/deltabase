@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <OutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)bin/dbms/Debug/</OutputPath>
+        <OutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)bin/dbms/Release/</OutputPath>
+        <AssemblyName>dlt_server_app</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Server.Core\Server.Core.csproj" />
+    </ItemGroup>
+
+</Project>
