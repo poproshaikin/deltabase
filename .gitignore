@@ -1,4 +1,8 @@
 .idea
+*sln.DotSettings*
+
 /bin/
-/obj/
-deltabase.sln.DotSettings.user
+/obj/g
+
+**/bin/*
+**/obj/*
