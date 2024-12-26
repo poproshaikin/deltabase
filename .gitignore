@@ -1,4 +1,4 @@
 .idea
-bin
-obj
+/bin/
+/obj/
 deltabase.sln.DotSettings.user
