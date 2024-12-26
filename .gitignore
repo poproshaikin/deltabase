@@ -1,6 +1,10 @@
 .idea
-bin
-obj
-**/bin
-**/obj
 *sln.DotSettings*
+
+/bin/
+/obj/g
+
+**/bin/*
+**/obj/*
+
+Tessts
