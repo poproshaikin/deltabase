@@ -4,18 +4,16 @@ using TokenType = Enums.Sql.Tokens.TokenType;
 
 namespace Sql.Shared.Tokens;
 
-public class SqlToken
+public readonly struct SqlToken
 {
-    public TokenType Type { get; set; }
-    public string Value { get; set; }
+    public readonly TokenType Type { get; }
+    public readonly string Value { get; }
 
     public SqlToken(TokenType type, string value)
     {
         Type = type;
         Value = value;
     }
-
-    public static implicit operator string(SqlToken token) => token.Value;
 
     public bool IsKeyword(Keyword type)
     {
@@ -56,4 +54,6 @@ public class SqlToken
     }
 
     public override string ToString() => Value;
+
+    public static implicit operator string(SqlToken token) => token.Value;
 }
