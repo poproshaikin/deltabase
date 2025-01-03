@@ -1,5 +1,6 @@
 using Data.Definitions;
 using Data.Definitions.Schemes;
+using Data.Operation;
 using Enums.Exceptions;
 using Enums.Records.Columns;
 using Enums.Sql.Tokens;
@@ -19,10 +20,12 @@ public class QueryValidator
     private const int MinLength_CreateTable = 5; // CREATE TABLE <name> <columnName> <valueType>
 
     private DataDefinitor _dataDef;
+    private TypeChecker _typeChecker;
 
     public QueryValidator(string dbName, FileSystemHelper fs)
     {
         _dataDef = new DataDefinitor(dbName, fs);
+        _typeChecker = new TypeChecker();
     }
     
     public ValidationResult Validate(ISqlQuery parsedQuery)
@@ -58,26 +61,48 @@ public class QueryValidator
     private ValidationResult ValidateInsert(InsertQuery query)
     {
         InsertExpr insert = query.Insert;
+        ValuesExpr[] values = query.Values;
+        
+        string[] columnNames = insert.ColumnNames;
+        TableScheme table = _dataDef.GetTableScheme(insert.TableName);
 
         // if table doesnt exist
         if (!_dataDef.TableExists(insert.TableName))
-                return new ValidationResult(false, query, ErrorType.TableDoesntExist);
+        {
+            return new ValidationResult(isValid: false, query, ErrorType.TableDoesntExist);
+        }
         
-        string[] columnNames = query.Insert.ColumnNames;
-        TableScheme table = _dataDef.GetTableScheme(query.Insert.TableName);
             
         // if some column doesnt exist
         if (columnNames.Any(columnName => !table.HasColumn(columnName)))
-            return new ValidationResult(false, query, ErrorType.ColumnDoesntExist);
-        
+        {
+            return new ValidationResult(isValid: false, query, ErrorType.ColumnDoesntExist);
+        }
+
         // if the count of a passed values not equals to columns passed
-        if (query.Values.Any(v => v.Values.Length != columnNames.Length))
+        if (values.Any(v => v.Values.Length != columnNames.Length))
+        {
             // TODO сделать автозаполнение колонок поддерживающих null
             // if some of the columns wasn't passed, except of primary key 
-            if (table.PrimaryKey is not null && query.Insert.ColumnNames.Any(c => c == table.PrimaryKey.Name))
-                return new ValidationResult(false, query, ErrorType.InvalidPassedColumns);
+            if (table.PrimaryKey is not null && 
+                insert.ColumnNames.Any(c => 
+                    c == table.PrimaryKey.Name))
+            {
+                return new ValidationResult(isValid: false, query, ErrorType.InvalidPassedColumns);
+            }
+        }
+
+        // if any of passed values does not match to the type of column
+        for (int i = 0; i < table.Columns.Length; i++)
+        {
+            if (values.Any(valuesSet => 
+                    !_typeChecker.Matches(table.Columns[i].ValueType, valuesSet[i])))
+            {
+                return new ValidationResult(isValid: false, query, ErrorType.InvalidPassedValueType);
+            }
+        }
         
-        return new ValidationResult(true, query, default);
+        return new ValidationResult(isValid: true, query, error: default);
     }
 
     private ValidationResult ValidateUpdate(UpdateQuery query)
@@ -85,30 +110,41 @@ public class QueryValidator
         UpdateExpr update = query.Update;
             
         if (!_dataDef.TableExists(update.TableName))
-                return new ValidationResult(false, query, ErrorType.TableDoesntExist);
+        {
+            return new ValidationResult(isValid: false, query, ErrorType.TableDoesntExist);
+        }
         
         AssignExpr[] assignments = query.Set.Assignments;
         foreach (AssignExpr assignment in assignments)
-                if (!ValidateAssignment(assignment, query.Update.TableName, out ErrorType error))
-                    return new ValidationResult(false, query, error);
-        
-        if (query.Condition is not null)
-                if (!ValidateConditionGroup(query.Condition, query.Update.TableName, out ErrorType error))
-                    return new ValidationResult(false, query, error);
+        {
+            if (!ValidateAssignment(assignment, query.Update.TableName, out ErrorType error))
+            {
+                return new ValidationResult(isValid: false, query, error);
+            }
+        }
 
-        return new ValidationResult(true, query, default);
+        // if a condition is invalid 
+        if (query.Condition is not null)
+        {
+            if (!ValidateConditionGroup(query.Condition, query.Update.TableName, out ErrorType error))
+            {
+                return new ValidationResult(isValid: false, query, error);
+            }
+        }
+
+        return new ValidationResult(isValid: true, query, error: default);
     }
 
     private ValidationResult ValidateDelete(DeleteQuery query)
     {
         if (!ValidateFromExpr(query.From, out ErrorType error))
-            return new ValidationResult(false, query, error);
+            return new ValidationResult(isValid: false, query, error);
         
         if (query.Condition is not null)
             if (!ValidateConditionGroup(query.Condition, query.From.TableName, out error))
-                return new ValidationResult(false, query, error);
+                return new ValidationResult(isValid: false, query, error);
         
-        return new ValidationResult(true, query, default);
+        return new ValidationResult(isValid: true, query, error: default);
     }
 
     private bool ValidateFromExpr(FromExpr from, out ErrorType error)
@@ -176,7 +212,7 @@ public class QueryValidator
         }
         else
         {
-            if (!CheckTypeMatch(leftCol.ValueType, right))
+            if (!_typeChecker.Matches(leftCol.ValueType, right))
             {
                 error = ErrorType.InvalidValueType;
                 return false;
@@ -239,7 +275,7 @@ public class QueryValidator
         }
         else
         {
-            if (!CheckTypeMatch(leftCol.ValueType, right))
+            if (!_typeChecker.Matches(leftCol.ValueType, right))
             {
                 error = ErrorType.InvalidValueType;
                 return false;
@@ -248,16 +284,5 @@ public class QueryValidator
 
         error = default;
         return true;
-    }
-
-    private bool CheckTypeMatch(SqlValueType valueType, string value)
-    {
-        return valueType switch
-        {
-            SqlValueType.Integer when !int.TryParse(value, out _) => false,
-            SqlValueType.Float when !float.TryParse(value, out _) => false,
-            SqlValueType.Char when value.Length != 1 => false,
-            _ => true
-        };
     }
 }
