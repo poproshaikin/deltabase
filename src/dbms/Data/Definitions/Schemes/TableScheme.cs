@@ -1,3 +1,4 @@
+using Enums.FileSystem;
 using Enums.Records.Columns;
 
 namespace Data.Definitions.Schemes;
@@ -5,7 +6,10 @@ namespace Data.Definitions.Schemes;
 public class TableScheme
 {
     public string TableName { get; set; }
+    
     public ColumnScheme[] Columns { get; set; }
+
+    public ColumnScheme? PrimaryKey => Columns.FirstOrDefault(c => c.HasConstraint(ColumnConstraint.Pk));
 
     public TableScheme(string tableName, IReadOnlyList<ColumnScheme> columns)
     {
@@ -22,6 +26,4 @@ public class TableScheme
     {
         return Columns.FirstOrDefault(c => c.Name == columnName);
     }
-
-    public ColumnScheme? PrimaryKey => Columns.FirstOrDefault(c => c.HasConstraint(ColumnConstraint.Pk));
 }
