@@ -4,7 +4,7 @@ using Data.Models;
 using Data.Operation;
 using Data.Operation.IO;
 using Exceptions;
-using Sql.Shared.Execution;
+using Sql.Shared.Expressions;
 using Sql.Shared.Queries;
 using Utils;
 
@@ -30,7 +30,7 @@ public class QueryExecutor
     /// </summary>
     /// <param name="validatedQuery">The validated SQL query to be executed.</param>
     /// <returns>The <see cref="ExecutionResult"/> of the execution</returns>
-    public ExecutionResult Execute(ISqlQuery validatedQuery)
+    public IExecutionResult Execute(ISqlQuery validatedQuery)
     {
         try
         {
@@ -48,30 +48,44 @@ public class QueryExecutor
         }
     }
 
-    private ExecutionResult ExecuteSelect(SelectQuery query)
+    private ExecutionResult<PageRow[]> ExecuteSelect(SelectQuery query)
     {
-        DataScanner scanner = _provider.CreateReader();
+        DataScanner scanner = _provider.CreateScanner();
         DataDefinitor definitor = _provider.CreateDefinitor();
         
         TableScheme tableScheme = definitor.GetTableScheme(query.From.TableName);
-        TableModel read = scanner.Read(tableScheme, query.Select.ColumnNames, query.Limit?.Limit, query.Condition);
+        TableModel read = scanner.Scan(tableScheme, query.Select.ColumnNames, query.Limit?.Limit, query.Condition);
         
-        return new ExecutionResult(
+        return new ExecutionResult<PageRow[]>(
             rowsAffected: read.Rows.Length,
-            dataSet: read.Rows.Select(r => r.ToString()));
+            result: read.Rows);
     }
 
-    private ExecutionResult ExecuteInsert(InsertQuery query)
+    private IExecutionResult ExecuteInsert(InsertQuery query)
     {
         DataInserter inserter = _provider.CreateInserter();
         DataDefinitor definitor = _provider.CreateDefinitor();
         DataSorter sorter = _provider.CreateSorter();
         
         string tableName = query.Insert.TableName;
-        _provider.SetStreamAccess(FileAccess.ReadWrite, tableName);
-        
-        // if (sorter.NeedsSorting)
+        TableScheme scheme = definitor.GetTableScheme(tableName);
 
-        throw new NotImplementedException();
+        int rowsAffected;
+        
+        _provider.SetStreamAccess(FileAccess.ReadWrite, tableName);
+
+        foreach (ValuesExpr insertingDataSet in query.Values)
+        {
+            string[] finalDataSet = sorter.NeedsSort(scheme,
+                query.Insert.ColumnNames)
+                ? sorter.Sort(scheme,
+                    passedColumns: query.Insert.ColumnNames,
+                    passedValues: insertingDataSet)
+                : insertingDataSet;
+
+            inserter.Insert(scheme, finalDataSet);
+        }
+
+        _provider.SetStreamAccess(FileAccess.Read, tableName);
     }
 }
