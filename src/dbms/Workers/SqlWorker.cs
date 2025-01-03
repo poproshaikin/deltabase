@@ -1,11 +1,11 @@
 using System.Diagnostics;
-using Sql.Shared.Execution;
+using Sql.Executing.App;
 
 namespace Workers;
 
 public class SqlWorker : IDltWorker
 {
-    public ExecutionResult DoParseAndExecute(string rawQuery, string serverName, string dbName)
+    public IExecutionResult DoParseAndExecute(string rawQuery, string serverName, string dbName)
     {
         string executable = "./sql_exec_app.exe";
 
@@ -29,6 +29,6 @@ public class SqlWorker : IDltWorker
             executionResultString = process.StandardOutput.ReadToEnd();
         }
 
-        return ExecutionResult.Deserialize(executionResultString);
+        return IExecutionResult.Deserialize(executionResultString);
     } 
 }
