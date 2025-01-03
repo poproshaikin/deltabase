@@ -1,8 +1,9 @@
 using Data.Definitions.Schemes;
+using Enums;
 using Enums.FileSystem;
 using Utils;
 
-namespace Data.Definitions;
+namespace Data.Operation;
 
 public class DataDefinitor
 {
@@ -38,9 +39,21 @@ public class DataDefinitor
 
     internal ColumnScheme[] ReadColumnSchemes(string tableName)
     {
-        string[] lines = _fs.ReadRecordFile(_dbName, tableName, FileExtension.DEF);
+        string[] lines = _fs.ReadRecordFile(_dbName, tableName, FileType.Def);
 
         return lines.Select(ColumnScheme.Parse).ToArray();
+    }
+
+    internal DirectoryInfo GetTableDirectory(string tableName)
+    {
+        string path = _fs.GetRecordFolderPath(_dbName, tableName);
+        return new DirectoryInfo(path);
+    }
+    
+    internal FileInfo[] GetTableFiles(string tableName, FileType fileType)
+    {
+        return GetTableDirectory(tableName)
+            .GetFiles(searchPattern: $"*.{EnumsStorage.GetExtensionString(fileType)}");
     }
 
     private void InitSchemesList()
