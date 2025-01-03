@@ -12,6 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Sql\Sql.Executing\Sql.Executing.csproj" />
       <ProjectReference Include="..\Sql\Sql.Shared\Sql.Shared.csproj" />
     </ItemGroup>
 

@@ -16,6 +16,7 @@
       <ProjectReference Include="..\..\Enums\Enums.csproj" />
       <ProjectReference Include="..\..\Exceptions\Exceptions.csproj" />
       <ProjectReference Include="..\..\Network\Network.csproj" />
+      <ProjectReference Include="..\..\Sql\Sql.Executing\Sql.Executing.csproj" />
       <ProjectReference Include="..\..\Sql\Sql.Shared\Sql.Shared.csproj" />
       <ProjectReference Include="..\..\Utils\Utils.csproj" />
       <ProjectReference Include="..\..\Workers\Workers.csproj" />
