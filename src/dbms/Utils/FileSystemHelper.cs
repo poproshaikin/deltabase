@@ -63,7 +63,7 @@ public class FileSystemHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string GetDatabaseConfPath(string databaseName)
     {
-        return $"{GetDatabaseFolderPath(databaseName)}/{databaseName}.{EnumsStorage.GetExtensionString(FileExtension.CONF)}";
+        return $"{GetDatabaseFolderPath(databaseName)}/{databaseName}.{EnumsStorage.GetExtensionString(FileType.Conf)}";
     }
 
     /// <summary>
@@ -71,11 +71,11 @@ public class FileSystemHelper
     /// </summary>
     /// <param name="databaseName">The name of the database.</param>
     /// <param name="recordName">The name of the record.</param>
-    /// <param name="extension">The file extension for the record (e.g., RECORD or DEF).</param>
+    /// <param name="type">The file extension for the record (e.g., RECORD or DEF).</param>
     /// <returns>The full path to the record file.</returns>
-    public string GetRecordFilePath(string databaseName, string recordName, FileExtension extension)
+    public string GetRecordFilePath(string databaseName, string recordName, FileType type)
     {
-        string extensionStr = extension == default ? "" : $".{EnumsStorage.GetExtensionString(extension)}";
+        string extensionStr = type == default ? "" : $".{EnumsStorage.GetExtensionString(type)}";
         return $"{GetDatabaseFolderPath(databaseName)}/records/{recordName}/{recordName}{extensionStr}";
     }
     
@@ -84,18 +84,18 @@ public class FileSystemHelper
     /// </summary>
     /// <param name="dbName">The name of the database.</param>
     /// <param name="recordName">The name of the record file.</param>
-    /// <param name="extension">The file extension of the record.</param>
+    /// <param name="type">The file extension of the record.</param>
     /// <returns>An array of strings representing the contents of the file.</returns>
-    public async Task<string[]> ReadRecordFileAsync(string dbName, string recordName, FileExtension extension)
+    public async Task<string[]> ReadRecordFileAsync(string dbName, string recordName, FileType type)
     {
-        string path = GetRecordFilePath(dbName, recordName, extension);
+        string path = GetRecordFilePath(dbName, recordName, type);
         return await File.ReadAllLinesAsync(path);
     }
     
     public async Task<string[]> ReadRecordFileAsync(string dbName, string recordName, string columnName)
     {
         string path =
-            $"{_serverPath}/{ServerName}/db/{dbName}/records/{recordName}/{columnName}.{EnumsStorage.GetExtensionString(FileExtension.RECORD)}";
+            $"{_serverPath}/{ServerName}/db/{dbName}/records/{recordName}/{columnName}.{EnumsStorage.GetExtensionString(FileType.Record)}";
         return await File.ReadAllLinesAsync(path);
     }
     
@@ -104,22 +104,22 @@ public class FileSystemHelper
     /// </summary>
     /// <param name="dbName">The name of the database.</param>
     /// <param name="recordName">The name of the record file.</param>
-    /// <param name="extension">The file extension of the record.</param>
+    /// <param name="type">The file extension of the record.</param>
     /// <returns>An array of strings representing the contents of the file.</returns>
-    public string[] ReadRecordFile(string dbName, string recordName, FileExtension extension) =>
-        ReadRecordFileAsync(dbName, recordName, extension).GetAwaiter().GetResult();
+    public string[] ReadRecordFile(string dbName, string recordName, FileType type) =>
+        ReadRecordFileAsync(dbName, recordName, type).GetAwaiter().GetResult();
 
     /// <summary>
     /// Writes the specified rows to the record file asynchronously.
     /// </summary>
     /// <param name="dbName">The name of the database.</param>
     /// <param name="recordName">The name of the record file.</param>
-    /// <param name="extension">The file extension of the record.</param>
+    /// <param name="type">The file extension of the record.</param>
     /// <param name="rows">An enumerable collection of strings representing the rows to write to the file.</param>
     /// <returns>A task that represents the asynchronous write operation.</returns>
-    public async Task WriteToRecordFileAsync(string dbName, string recordName, FileExtension extension, IEnumerable<string> rows)
+    public async Task WriteToRecordFileAsync(string dbName, string recordName, FileType type, IEnumerable<string> rows)
     {
-        string path = GetRecordFilePath(dbName, recordName, extension);
+        string path = GetRecordFilePath(dbName, recordName, type);
         await File.WriteAllLinesAsync(path, rows);
     }
     
@@ -128,10 +128,10 @@ public class FileSystemHelper
     /// </summary>
     /// <param name="dbName">The name of the database.</param>
     /// <param name="recordName">The name of the record file.</param>
-    /// <param name="extension">The file extension of the record.</param>
+    /// <param name="type">The file extension of the record.</param>
     /// <param name="rows">An enumerable collection of strings representing the rows to write to the file.</param>
-    public void WriteToRecordFile(string dbName, string recordName, FileExtension extension, IEnumerable<string> rows) =>
-        WriteToRecordFileAsync(dbName, recordName, extension, rows).GetAwaiter().GetResult();
+    public void WriteToRecordFile(string dbName, string recordName, FileType type, IEnumerable<string> rows) =>
+        WriteToRecordFileAsync(dbName, recordName, type, rows).GetAwaiter().GetResult();
 
     /// <summary>
     /// Gets the folder path of the specified record in the given database.
@@ -186,7 +186,7 @@ public class FileSystemHelper
     public void CreateServerConfigFile(ushort port, string password)
     {
         string hashedPassword = ConvertHelper.Sha256(password);
-        string path = $"{_serverPath}/{ServerName}.{EnumsStorage.GetExtensionString(FileExtension.CONF)}";
+        string path = $"{_serverPath}/{ServerName}.{EnumsStorage.GetExtensionString(FileType.Conf)}";
         File.WriteAllLines(path, [ServerName, port.ToString(), hashedPassword]);
     }
     
