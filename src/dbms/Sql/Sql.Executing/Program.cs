@@ -3,7 +3,6 @@ using Data.Definitions;
 using Enums;
 using Enums.Sql;
 using Sql.Parsing.Shared;
-using Sql.Shared.Execution;
 using Sql.Shared.Queries;
 using Utils;
 
@@ -29,7 +28,7 @@ class Program
             
         ISqlQuery parsedQuery = parser.Parse(_rawQuery);
         ValidationResult validationResult = validator.Validate(parsedQuery);
-        ExecutionResult executionResult;
+        IExecutionResult executionResult;
         
         if (!validationResult.IsValid)
         {
