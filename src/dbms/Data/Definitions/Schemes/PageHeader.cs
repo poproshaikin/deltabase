@@ -6,10 +6,18 @@ public struct PageHeader
     public int RowsCount { get; set; }
     public int[] FreeRows { get; set; }
     
-    public PageHeader(int pageId, int rowsCount, int[] freeRows)
+    internal FileInfo? File { get; set; }
+    
+    internal PageHeader(int pageId, int rowsCount, int[] freeRows)
     {
         PageId = pageId;
         RowsCount = rowsCount;
         FreeRows = freeRows;
+        File = null;
+    }
+
+    internal PageHeader(int pageId, int rowsCount, int[] freeRows, FileInfo file) : this(pageId, rowsCount, freeRows)
+    {
+        File = file;
     }
 }
