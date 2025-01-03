@@ -21,16 +21,16 @@ public class DataScanner : DataManipulator
 
     private TableScheme? _cachedScheme;
 
-    public TableModel Read(TableScheme tableScheme,
+    public TableModel Scan(TableScheme tableScheme,
         string[]? passedColumns,
         int? rowsLimit,
         ConditionGroup? conditionGroup)
     {
-        return Task.Run(() => ReadAsync(tableScheme, passedColumns, rowsLimit, conditionGroup).GetAwaiter().GetResult())
+        return Task.Run(() => ScanAsync(tableScheme, passedColumns, rowsLimit, conditionGroup).GetAwaiter().GetResult())
             .Result;
     }
 
-    public async Task<TableModel> ReadAsync(TableScheme tableScheme,
+    public async Task<TableModel> ScanAsync(TableScheme tableScheme,
         string[]? passedColumns,
         int? rowsLimit,
         ConditionGroup? conditionGroup)
@@ -57,7 +57,12 @@ public class DataScanner : DataManipulator
             .ToArray();
 
         if (rowsLimit is null)
-            return allPages.Select(page => new PageReadingPlan(page, _cachedScheme, null, passedColumns, conditionGroup, false))
+            return allPages.Select(page => new PageReadingPlan(page,
+                    _cachedScheme,
+                    rowsToReadCount: null,
+                    passedColumns,
+                    conditionGroup,
+                    isHeaderRead: false))
                 .ToArray();
         return await GetReadingPlansWithinLimitAsync(allPages, rowsLimit.Value, passedColumns, conditionGroup);
     }

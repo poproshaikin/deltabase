@@ -24,7 +24,7 @@ public class DataServiceProvider
         return new DataDefinitor(_dbName, _fs);
     }
 
-    public DataScanner CreateReader()
+    public DataScanner CreateScanner()
     {
         return new DataScanner(_dbName, _fs, _pool, CreateDefinitor());
     }
