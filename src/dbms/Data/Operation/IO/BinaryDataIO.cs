@@ -1,7 +1,9 @@
 using System.Text;
 using Data.Definitions.Schemes;
 using Data.Models;
+using Enums.Exceptions;
 using Enums.Records.Columns;
+using Exceptions;
 using Utils;
 
 namespace Data.Operation.IO;
@@ -15,10 +17,17 @@ public class BinaryDataIO
     private const char new_line_marker = '\n';
     
     private readonly FileStream _stream;
-    
+
+    private TableScheme? _scheme;
+
     public BinaryDataIO(FileStream stream)
     {
         _stream = stream;
+    }
+    
+    public BinaryDataIO(FileStream stream, TableScheme scheme) : this(stream)
+    {
+        _scheme = scheme;
     }
 
     public async Task<PageHeader> ReadHeaderAsync()
@@ -27,7 +36,7 @@ public class BinaryDataIO
         int rowsCount = await ReadIntAsync();
         int[] freeRows = await ReadFreeRowsAsync();
         
-        return new PageHeader(pageId, rowsCount, freeRows);
+        return new PageHeader(pageId, rowsCount, freeRows, new FileInfo(_stream.Name));
     }
 
     public async Task WriteHeader(PageHeader header)
@@ -47,6 +56,11 @@ public class BinaryDataIO
         {
             await SkipRowAsync();
         }
+    }
+
+    public async Task<PageRow> ReadRowAsync()
+    {
+        return await ReadRowAsync(_scheme ?? throw new DbEngineException(ErrorType.InternalServerError));
     }
     
     public async Task<PageRow> ReadRowAsync(TableScheme scheme)
@@ -71,6 +85,11 @@ public class BinaryDataIO
 
         return new PageRow(rid, values.ToArray());
     }
+
+    public async Task WriteRowAsync(PageRow row)
+    {
+        await WriteRowAsync(row, _scheme ?? throw new DbEngineException(ErrorType.InternalServerError));
+    }
     
     public async Task WriteRowAsync(PageRow row, TableScheme scheme)
     {
@@ -88,6 +107,12 @@ public class BinaryDataIO
                 case SqlValueType.Float: await WriteFloatAsync((float)row[i]); break;
                 
                 // TODO доделать остальные типы
+                case SqlValueType.Null:
+                case SqlValueType.IntegerArr:
+                case SqlValueType.StringArr:
+                case SqlValueType.CharArr:
+                case SqlValueType.FloatArr:
+                case SqlValueType.Blob:
                 default: throw new NotImplementedException(); break;
             }
         }
@@ -221,6 +246,11 @@ public class BinaryDataIO
         await _stream.WriteAsync([value], 0, 1);
     }
 
+    public void SkipBytes(int count)
+    {
+        _stream.Seek(count, SeekOrigin.Current);
+    }
+
     public async Task SkipBlockAsync()
     {
         int blockLength = await ReadIntAsync();
@@ -234,6 +264,77 @@ public class BinaryDataIO
         await _stream.WriteAsync(countBytes, 0, sizeof(int));
         await _stream.FlushAsync();
     }  
+    
+    public async Task SeekToRowAsync(int emptyRowId)
+    {
+        await SeekToRowAsync(emptyRowId, _scheme ?? throw new DbEngineException(ErrorType.InternalServerError));
+    }
+
+    public async Task SeekToRowAsync(int emptyRowId, TableScheme scheme)
+    {
+        int rid;
+        do
+        {
+            rid = await ReadIntAsync();
+
+            if (rid == emptyRowId)
+            {
+                break;
+            }
+
+            ColumnScheme[] columns = scheme.Columns;
+
+            for (int i = 0; i < columns.Length; i++)
+            {
+                await SkipColumnAsync(columnId: i, scheme);
+            }
+        } while (rid != emptyRowId);
+    }
+
+    public async Task SkipColumnAsync(int columnId)
+    {
+        await SkipColumnAsync(columnId, _scheme ?? throw new DbEngineException(ErrorType.InternalServerError));
+    }
+
+    public async Task SkipColumnAsync(int columnId, TableScheme scheme)
+    {
+        SqlValueType valueType = scheme.Columns[columnId].ValueType;
+        
+        if (IsFixedLengthType(valueType))
+        {
+            int length = GetTypeWeight(valueType);
+            SkipBytes(length);
+        }
+        else
+        {
+            await SkipBlockAsync();
+        }
+    }
+
+    public bool IsFixedLengthType(SqlValueType type)
+    {
+        return type switch
+        {
+            SqlValueType.Integer => true,
+            SqlValueType.Float => true,
+            SqlValueType.Char => true,
+
+            _ => false
+        };
+    }
+    
+    /// <returns> -1 if weight is variable, otherwise, weight of a type</returns>
+    public int GetTypeWeight(SqlValueType valueType)
+    {
+        return valueType switch
+        {
+            SqlValueType.Integer => sizeof(int),
+            SqlValueType.Float => sizeof(float),
+            SqlValueType.Char => sizeof(char),
+
+            _ => -1,
+        };
+    }
 
     public byte[] GetBytes(object value)
     {
@@ -264,7 +365,7 @@ public class BinaryDataIO
 
         if (value is string @string)
         {
-            return System.Text.Encoding.UTF8.GetBytes(@string);
+            return Encoding.UTF8.GetBytes(@string);
         }
 
         if (value is int[] intArray)
@@ -284,7 +385,7 @@ public class BinaryDataIO
         
         if (value is string[] stringArray)
         {
-            return stringArray.Aggregate<string, byte[]>([], (sum, current) => sum.Concat(System.Text.Encoding.UTF8.GetBytes(current)).ToArray());
+            return stringArray.Aggregate<string, byte[]>([], (sum, current) => sum.Concat(Encoding.UTF8.GetBytes(current)).ToArray());
         }
 
         throw new NotImplementedException();
