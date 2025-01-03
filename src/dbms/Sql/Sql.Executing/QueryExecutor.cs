@@ -8,7 +8,7 @@ using Sql.Shared.Expressions;
 using Sql.Shared.Queries;
 using Utils;
 
-namespace Sql.Executing.App;
+namespace Sql.Executing;
 
 public class QueryExecutor
 {

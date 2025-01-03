@@ -1,10 +1,8 @@
 using Enums;
 using Enums.Sql.Tokens;
-using Sql.Parsing.Shared;
 using Sql.Shared.Tokens;
 
-namespace Sql.Executing.App;
-
+namespace Sql.Executing;
 public class SqlTokenizer
 {
     public SqlToken[] Tokenize(string rawSql)

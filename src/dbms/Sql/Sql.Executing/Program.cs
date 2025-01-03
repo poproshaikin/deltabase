@@ -2,11 +2,10 @@
 using Data.Definitions;
 using Enums;
 using Enums.Sql;
-using Sql.Parsing.Shared;
 using Sql.Shared.Queries;
 using Utils;
 
-namespace Sql.Executing.App;
+namespace Sql.Executing;
 
 class Program
 {

@@ -10,7 +10,7 @@
         <IntermediateOutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)obj/dbms/Debug/Sql.Executing</IntermediateOutputPath>
         <IntermediateOutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)obj/dbms/Release/Sql.Executing</IntermediateOutputPath>
         <AssemblyName>sql_exec_app</AssemblyName>
-        <RootNamespace>Sql.Executing.App</RootNamespace>
+        <RootNamespace>Sql.Executing</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

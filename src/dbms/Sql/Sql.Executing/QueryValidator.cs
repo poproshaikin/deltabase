@@ -9,7 +9,7 @@ using Sql.Shared.Queries;
 using Sql.Shared.Tokens;
 using Utils;
 
-namespace Sql.Executing.App;
+namespace Sql.Executing;
 
 public class QueryValidator
 {
@@ -20,12 +20,12 @@ public class QueryValidator
     private const int MinLength_CreateTable = 5; // CREATE TABLE <name> <columnName> <valueType>
 
     private DataDefinitor _dataDef;
-    private TypeChecker _typeChecker;
+    private TypeHandler _typeHandler;
 
     public QueryValidator(string dbName, FileSystemHelper fs)
     {
         _dataDef = new DataDefinitor(dbName, fs);
-        _typeChecker = new TypeChecker();
+        _typeHandler = new TypeHandler();
     }
     
     public ValidationResult Validate(ISqlQuery parsedQuery)
@@ -96,7 +96,7 @@ public class QueryValidator
         for (int i = 0; i < table.Columns.Length; i++)
         {
             if (values.Any(valuesSet => 
-                    !_typeChecker.Matches(table.Columns[i].ValueType, valuesSet[i])))
+                    !_typeHandler.Matches(table.Columns[i].ValueType, valuesSet[i])))
             {
                 return new ValidationResult(isValid: false, query, ErrorType.InvalidPassedValueType);
             }
@@ -212,7 +212,7 @@ public class QueryValidator
         }
         else
         {
-            if (!_typeChecker.Matches(leftCol.ValueType, right))
+            if (!_typeHandler.Matches(leftCol.ValueType, right))
             {
                 error = ErrorType.InvalidValueType;
                 return false;
@@ -275,7 +275,7 @@ public class QueryValidator
         }
         else
         {
-            if (!_typeChecker.Matches(leftCol.ValueType, right))
+            if (!_typeHandler.Matches(leftCol.ValueType, right))
             {
                 error = ErrorType.InvalidValueType;
                 return false;

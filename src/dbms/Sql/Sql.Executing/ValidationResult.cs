@@ -1,7 +1,7 @@
 using Enums.Exceptions;
 using Sql.Shared.Queries;
 
-namespace Sql.Executing.App;
+namespace Sql.Executing;
 
 public class ValidationResult
 {

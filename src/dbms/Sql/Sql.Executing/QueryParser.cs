@@ -2,12 +2,11 @@ using Enums;
 using Enums.Exceptions;
 using Enums.Sql.Tokens;
 using Exceptions;
-using Sql.Executing.App;
 using Sql.Shared.Expressions;
 using Sql.Shared.Queries;
 using Sql.Shared.Tokens;
 
-namespace Sql.Parsing.Shared;
+namespace Sql.Executing;
 
 /// <summary>
 /// Parses SQL queries and converts them into corresponding SQL query objects.

@@ -3,7 +3,7 @@ using Data.Models;
 using Enums.Exceptions;
 using Utils.Settings;
 
-namespace Sql.Executing.App;
+namespace Sql.Executing;
 
 public interface IExecutionResult
 {
