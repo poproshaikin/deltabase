@@ -105,12 +105,12 @@ public static class EnumsStorage
             { "UN", ColumnConstraint.Un },
         };
 
-    public static readonly Dictionary<string, FileExtension> ExtensionToStringMap =
-        new Dictionary<string, FileExtension>()
+    public static readonly Dictionary<string, FileType> ExtensionToStringMap =
+        new Dictionary<string, FileType>()
         {
-            { "def", FileExtension.DEF },
-            { "conf", FileExtension.CONF },
-            { "record", FileExtension.RECORD },
+            { "def", FileType.Def },
+            { "conf", FileType.Conf },
+            { "record", FileType.Record },
         };
 
     public static readonly Dictionary<string, RequestType> CommandToStringMap =
@@ -191,10 +191,10 @@ public static class EnumsStorage
                throw new ArgumentOutOfRangeException(nameof(type), type, null);
     }
     
-    public static string GetExtensionString(FileExtension extension)
+    public static string GetExtensionString(FileType type)
     {
-        return ExtensionToStringMap.FirstOrDefault(kvp => kvp.Value == extension).Key ??
-               throw new ArgumentOutOfRangeException(nameof(extension), extension, null);
+        return ExtensionToStringMap.FirstOrDefault(kvp => kvp.Value == type).Key ??
+               throw new ArgumentOutOfRangeException(nameof(type), type, null);
     }
 
     public static QueryExecutingOption GetExecutingOption(string executingOption)
