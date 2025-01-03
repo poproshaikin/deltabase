@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Sql.Shared.Execution;
+using Sql.Executing.App;
 using Workers;
 
 namespace Server.Core;
@@ -19,12 +19,12 @@ internal class DltDatabase
         _serverName = serverName;
     }
 
-    public ExecutionResult ExecuteRequest(string rawQuery)
+    public IExecutionResult ExecuteRequest(string rawQuery)
     {
         Stopwatch stopwatch = Stopwatch.StartNew();
         SqlWorker sqlWorker = new(); 
         
-        ExecutionResult executionResult = sqlWorker.DoParseAndExecute(rawQuery, _serverName, Name)!;
+        IExecutionResult executionResult = sqlWorker.DoParseAndExecute(rawQuery, _serverName, Name)!;
         
         executionResult.ExecutionTime = stopwatch.ElapsedMilliseconds;
         return executionResult;
