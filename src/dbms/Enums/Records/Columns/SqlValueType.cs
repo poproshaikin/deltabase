@@ -12,5 +12,7 @@ public enum SqlValueType
     IntegerArr,
     StringArr,
     CharArr,
-    FloatArr 
+    FloatArr,
+    
+    Blob,
 }
