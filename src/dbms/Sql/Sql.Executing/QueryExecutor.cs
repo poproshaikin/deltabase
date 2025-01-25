@@ -76,7 +76,7 @@ public class QueryExecutor
 
         foreach (ValuesExpr insertingDataSet in query.Values)
         {
-            string[] finalDataSet = sorter.NeedsSort(scheme,
+            string?[] finalDataSet = sorter.NeedsSort(scheme,
                 query.Insert.ColumnNames)
                 ? sorter.Sort(scheme,
                     passedColumns: query.Insert.ColumnNames,

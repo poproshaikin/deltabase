@@ -4,23 +4,23 @@ namespace Enums;
 
 public static class EnumHelper
 {
-    public static SqlValueType ConvertValueType(string valueTypeStr)
-    {
-        return valueTypeStr switch
-        {
-            "INTEGER" => SqlValueType.Integer,
-            "STRING" => SqlValueType.String,
-            "CHAR" => SqlValueType.Char,
-            "FLOAT" => SqlValueType.Float,
-        
-            "INTEGER[]" => SqlValueType.IntegerArr,
-            "STRING[]" => SqlValueType.StringArr,
-            "CHAR[]" => SqlValueType.CharArr,
-            "FLOAT[]" => SqlValueType.FloatArr,
-
-            _ => throw new ArgumentOutOfRangeException(nameof(valueTypeStr), valueTypeStr, null)
-        };
-    }
+    // public static SqlValueType ConvertValueType(string valueTypeStr)
+    // {
+    //     return valueTypeStr switch
+    //     {
+    //         "INTEGER" => SqlValueType.Integer,
+    //         "STRING" => SqlValueType.String,
+    //         "CHAR" => SqlValueType.Char,
+    //         "FLOAT" => SqlValueType.Float,
+    //     
+    //         "INTEGER[]" => SqlValueType.IntegerArr,
+    //         "STRING[]" => SqlValueType.StringArr,
+    //         "CHAR[]" => SqlValueType.CharArr,
+    //         "FLOAT[]" => SqlValueType.FloatArr,
+    //
+    //         _ => throw new ArgumentOutOfRangeException(nameof(valueTypeStr), valueTypeStr, null)
+    //     };
+    // }
 
     public static ColumnConstraint ConvertConstraint(string constraintStr)
     {
@@ -34,11 +34,4 @@ public static class EnumHelper
             _ => throw new ArgumentOutOfRangeException(nameof(constraintStr), constraintStr, null)
         };
     }
-}
-
-public enum CommandContentType
-{
-    Unspecified = 0,
-    Command = 1,
-    Data = 2
 }

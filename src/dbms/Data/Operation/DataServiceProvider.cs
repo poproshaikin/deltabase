@@ -39,7 +39,7 @@ public class DataServiceProvider
         return new DataSorter(_dbName, _fs, _pool, CreateDefinitor());
     }
 
-    public FileStreamPool GetPool()
+    internal FileStreamPool GetPool()
     {
         return _pool;
     }

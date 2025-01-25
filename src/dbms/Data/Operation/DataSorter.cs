@@ -48,7 +48,7 @@ public class DataSorter : DataManipulator
         return false;
     }
 
-    public string[] Sort(TableScheme scheme, string[] passedColumns, string[] passedValues)
+    public string?[] Sort(TableScheme scheme, string[] passedColumns, string?[] passedValues)
     {
         Dictionary<string, int> columnIndexMap = scheme.Columns
             .Select((columnScheme, index) => new { columnScheme.Name, Index = index })
@@ -60,7 +60,7 @@ public class DataSorter : DataManipulator
                 : throw new DbEngineException($"Column '{d}' not found in the scheme."))
             .ToArray();
         
-        string[] filteredAndSortedValues = selectedColumnsIds
+        string?[] filteredAndSortedValues = selectedColumnsIds
             .Select(id => passedValues[id])
             .ToArray();
 

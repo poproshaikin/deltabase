@@ -16,7 +16,7 @@ public abstract class DataManipulator
     
     protected DataDefinitor _definitor;
     
-    protected FileStreamPool _pool;
+    private protected FileStreamPool _pool;
     
     private protected DataManipulator(string dbName,
         FileSystemHelper fs,

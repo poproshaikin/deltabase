@@ -80,21 +80,21 @@ public static class EnumsStorage
             { "NOT", OperatorType.Not },
         };
 
-    public static readonly Dictionary<string, SqlValueType> ValueTypesToTokenMap =
-        new Dictionary<string, SqlValueType>()
-        {
-            { "NULL", SqlValueType.Null },
-
-            { "INTEGER", SqlValueType.Integer },
-            { "STRING", SqlValueType.String },
-            { "CHAR", SqlValueType.Char },
-            { "FLOAT", SqlValueType.Float },
-
-            { "INTEGER[]", SqlValueType.IntegerArr },
-            { "STRING[]", SqlValueType.StringArr },
-            { "CHAR[]", SqlValueType.CharArr },
-            { "FLOAT[]", SqlValueType.FloatArr },
-        };
+    // public static readonly Dictionary<string, SqlValueType> ValueTypesToTokenMap =
+    //     new Dictionary<string, SqlValueType>()
+    //     {
+    //         { "NULL", SqlValueType.Null },
+    //
+    //         { "INTEGER", SqlValueType.Integer },
+    //         { "STRING", SqlValueType.String },
+    //         { "CHAR", SqlValueType.Char },
+    //         { "FLOAT", SqlValueType.Float },
+    //
+    //         { "INTEGER[]", SqlValueType.IntegerArr },
+    //         { "STRING[]", SqlValueType.StringArr },
+    //         { "CHAR[]", SqlValueType.CharArr },
+    //         { "FLOAT[]", SqlValueType.FloatArr },
+    //     };
 
     public static readonly Dictionary<string, ColumnConstraint> ColumnConstraintToTokenMap =
         new Dictionary<string, ColumnConstraint>()
@@ -131,10 +131,10 @@ public static class EnumsStorage
             { "reader", QueryExecutingOption.Reader }
         };
     
-    public static SqlValueType GetColumnValueType(string lexeme)
-    {
-        return ValueTypesToTokenMap[lexeme];
-    }
+    // public static SqlValueType GetColumnValueType(string lexeme)
+    // {
+    //     return ValueTypesToTokenMap[lexeme];
+    // }
 
     public static TokenType GetTokenType(string lexeme)
     {

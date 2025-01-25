@@ -104,6 +104,7 @@ public class DataScanner : DataManipulator
     {
         FileStream stream = _pool.GetOrOpen(plan.PageToRead);
         BinaryDataIO io = new(stream);
+        DataSorter sorter = new(_dbName, _fs, _pool, _definitor);
 
         List<PageRow> listToLoad = [];
         ConditionChecker checker = new(tableScheme, plan.ConditionGroup!);
@@ -116,7 +117,8 @@ public class DataScanner : DataManipulator
 
         while (await io.ReadRowAsync(_cachedScheme!) is { } readPageRow)
         {
-            if (plan.PassedColumns is not null) readPageRow.Data = FilterAndSort(tableScheme, plan.PassedColumns, readPageRow);
+            if (plan.PassedColumns is not null && sorter.NeedsSort(tableScheme, plan.PassedColumns))
+                readPageRow.Data = sorter.Sort(tableScheme, plan.PassedColumns, readPageRow.Data);
 
             if (plan.RowsToReadCount is not null && listToLoad.Count >= plan.RowsToReadCount) break;
 

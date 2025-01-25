@@ -2,24 +2,22 @@ using Enums.Records.Columns;
 
 namespace Data.Models;
 
-public class PageRow
+public struct PageRow
 {
-    internal int RId { get; set; }
+    internal int? RId { get; }
     
-    public object[] Data { get; set; }
-
-    public int ColumnsCount => Data.Length;
+    public string?[] Data { get; set; }
     
     internal int ValuesCount => Data.Length; 
     
-    public object this[int index] => Data[index];
+    public string? this[int index] => Data[index];
 
-    public PageRow(int rid, object[] data)
+    public PageRow(int rid, string?[] data)
     {
         RId = rid;
         Data = data;
     }
-
+    
     public override string ToString()
     {
         return string.Join("■ ", Data);
