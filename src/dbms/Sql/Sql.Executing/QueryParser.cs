@@ -264,16 +264,16 @@ public class QueryParser
 
                 int lastIndex = tokens.FirstKeywordAfter(i);
 
-                string[] values = tokens[i..lastIndex].ValuesToArray();
+                string[] textValues = tokens[i..lastIndex].ValuesToArray();
 
-                if (values.Length == 0)
+                if (textValues.Length == 0)
                 {
                     throw new DbEngineException(ErrorType.InvalidPassedValues);
                 }
                 
                 expressions.Add(new ValuesExpr()
                 {
-                    Values = values
+                    Values = textValues
                 });
                 
                 continue;
@@ -337,14 +337,14 @@ public class QueryParser
     
         if (assignmentsCount == 1) // "Identifier1" = "Value1"
         {
-            return new[]
-            {
+            return
+            [
                 new AssignExpr()
                 {
                     LeftOperand = tokens[0],
                     RightOperand = tokens[^1],
                 }
-            };
+            ];
         }
         else // "Identifier1" = "Value1", "Identifier2" = "Value2", ...
         {
