@@ -1,6 +1,4 @@
 ﻿using System.Diagnostics;
-using Sql.Shared.Execution;
-
 namespace Workers;
 
 public interface IDltWorker
