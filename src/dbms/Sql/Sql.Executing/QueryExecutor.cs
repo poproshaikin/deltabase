@@ -1,8 +1,6 @@
-using Data.Definitions;
 using Data.Definitions.Schemes;
 using Data.Models;
 using Data.Operation;
-using Data.Operation.IO;
 using Exceptions;
 using Sql.Shared.Expressions;
 using Sql.Shared.Queries;
@@ -51,9 +49,9 @@ public class QueryExecutor
     private ExecutionResult<PageRow[]> ExecuteSelect(SelectQuery query)
     {
         DataScanner scanner = _provider.CreateScanner();
-        DataDefinitor definitor = _provider.CreateDefinitor();
+        DataDescriptor descriptor = _provider.CreateDescriptor();
         
-        TableScheme tableScheme = definitor.GetTableScheme(query.From.TableName);
+        TableScheme tableScheme = descriptor.GetTableScheme(query.From.TableName);
         TableModel read = scanner.Scan(tableScheme, query.Select.ColumnNames, query.Limit?.Limit, query.Condition);
         
         return new ExecutionResult<PageRow[]>(
@@ -63,29 +61,26 @@ public class QueryExecutor
 
     private IExecutionResult ExecuteInsert(InsertQuery query)
     {
-        DataInserter inserter = _provider.CreateInserter();
-        DataDefinitor definitor = _provider.CreateDefinitor();
-        DataSorter sorter = _provider.CreateSorter();
+        var inserter = _provider.CreateInserter();
+        var descriptor = _provider.CreateDescriptor();
+        var sorter = _provider.CreateSorter();
         
         string tableName = query.Insert.TableName;
-        TableScheme scheme = definitor.GetTableScheme(tableName);
+        var scheme = descriptor.GetTableScheme(tableName);
 
         int rowsAffected;
-        
-        _provider.SetStreamAccess(FileAccess.ReadWrite, tableName);
 
         foreach (ValuesExpr insertingDataSet in query.Values)
         {
-            string[] finalDataSet = sorter.NeedsSort(scheme,
-                query.Insert.ColumnNames)
-                ? sorter.Sort(scheme,
+            string?[] finalDataSet = sorter.NeedsSort(scheme, query.Insert.ColumnNames) ? 
+                sorter.Sort(scheme,
                     passedColumns: query.Insert.ColumnNames,
                     passedValues: insertingDataSet)
                 : insertingDataSet;
 
-            inserter.Insert(scheme, finalDataSet);
-        }
-
-        _provider.SetStreamAccess(FileAccess.Read, tableName);
+            var result = inserter.Insert(scheme, finalDataSet);
+            
+            
+        } 
     }
 }
