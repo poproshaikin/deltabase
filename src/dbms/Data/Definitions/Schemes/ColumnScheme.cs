@@ -12,7 +12,7 @@ public class ColumnScheme
     public ColumnScheme(string name, string valueType, string[] constraints)
     {
         Name = name;
-        ValueType = EnumsStorage.GetColumnValueType(valueType);
+        ValueType = SqlValueType.Parse(valueType);
         Constraints = constraints.Select(EnumsStorage.GetConstraint).ToArray();
     }
     
