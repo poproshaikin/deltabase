@@ -19,12 +19,12 @@ public class QueryValidator
     private const int MinLength_Select = 4; // SELECT * FROM <tableName>
     private const int MinLength_CreateTable = 5; // CREATE TABLE <name> <columnName> <valueType>
 
-    private DataDefinitor _dataDef;
+    private DataDescriptor _descriptor;
     private TypeHandler _typeHandler;
 
     public QueryValidator(string dbName, FileSystemHelper fs)
     {
-        _dataDef = new DataDefinitor(dbName, fs);
+        _descriptor = new DataDescriptor(dbName, fs);
         _typeHandler = new TypeHandler();
     }
     
@@ -64,10 +64,10 @@ public class QueryValidator
         ValuesExpr[] values = query.Values;
         
         string[] columnNames = insert.ColumnNames;
-        TableScheme table = _dataDef.GetTableScheme(insert.TableName);
+        TableScheme table = _descriptor.GetTableScheme(insert.TableName);
 
         // if table doesnt exist
-        if (!_dataDef.TableExists(insert.TableName))
+        if (!_descriptor.TableExists(insert.TableName))
         {
             return new ValidationResult(isValid: false, query, ErrorType.TableDoesntExist);
         }
@@ -109,7 +109,7 @@ public class QueryValidator
     {
         UpdateExpr update = query.Update;
             
-        if (!_dataDef.TableExists(update.TableName))
+        if (!_descriptor.TableExists(update.TableName))
         {
             return new ValidationResult(isValid: false, query, ErrorType.TableDoesntExist);
         }
@@ -149,7 +149,7 @@ public class QueryValidator
 
     private bool ValidateFromExpr(FromExpr from, out ErrorType error)
     {
-        if (!_dataDef.TableExists(from.TableName))
+        if (!_descriptor.TableExists(from.TableName))
         {
             error = ErrorType.TableDoesntExist;
             return false;
@@ -187,7 +187,7 @@ public class QueryValidator
 
     private bool ValidateCondition(ConditionExpr condition, string tableName, out ErrorType error)
     {
-        TableScheme table = _dataDef.GetTableScheme(tableName);
+        TableScheme table = _descriptor.GetTableScheme(tableName);
             
         SqlToken left = condition.LeftOperand;
         SqlToken right = condition.RightOperand;
@@ -231,7 +231,7 @@ public class QueryValidator
             return false;
         }
 
-        TableScheme scheme = _dataDef.GetTableScheme(tableName);
+        TableScheme scheme = _descriptor.GetTableScheme(tableName);
         
         SqlToken left = assignment.LeftOperand;
         SqlToken right = assignment.RightOperand;
