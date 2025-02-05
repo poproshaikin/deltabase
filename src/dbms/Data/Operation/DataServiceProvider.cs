@@ -19,27 +19,27 @@ public class DataServiceProvider
         _pool = new FileStreamPool(poolAccess);
     }
 
-    public DataDefinitor CreateDefinitor()
+    public DataDescriptor CreateDescriptor()
     {
-        return new DataDefinitor(_dbName, _fs);
+        return new DataDescriptor(_dbName, _fs);
     }
 
     public DataScanner CreateScanner()
     {
-        return new DataScanner(_dbName, _fs, _pool, CreateDefinitor());
+        return new DataScanner(_dbName, _fs, _pool, CreateDescriptor());
     }
 
     public DataInserter CreateInserter()
     {
-        return new DataInserter(_dbName, _fs, _pool, CreateDefinitor());
+        return new DataInserter(_dbName, _fs, _pool, CreateDescriptor());
     }
 
     public DataSorter CreateSorter()
     {
-        return new DataSorter(_dbName, _fs, _pool, CreateDefinitor());
+        return new DataSorter(_dbName, _fs, _pool, CreateDescriptor());
     }
 
-    public FileStreamPool GetPool()
+    internal FileStreamPool GetPool()
     {
         return _pool;
     }
