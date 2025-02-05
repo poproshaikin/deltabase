@@ -1,31 +1,27 @@
-using Data.Definitions;
-using Data.Definitions.Schemes;
-using Data.Models;
-using Data.Operation.IO;
-using Enums.Records.Columns;
-using Exceptions;
 using Utils;
 
 namespace Data.Operation;
 
 public abstract class DataManipulator
 {
-    protected string _dbName;
+    protected const long MAXIMUM_PAGE_SIZE = 8 * 1024;
+    
+    protected readonly string _dbName;
 
-    protected FileSystemHelper _fs;
+    protected readonly FileSystemHelper FsHelper;
     
-    protected DataDefinitor _definitor;
+    protected readonly DataDescriptor Descriptor;
     
-    protected FileStreamPool _pool;
+    private protected readonly FileStreamPool Pool;
     
     private protected DataManipulator(string dbName,
-        FileSystemHelper fs,
+        FileSystemHelper fsHelper,
         FileStreamPool pool,
-        DataDefinitor definitor)
+        DataDescriptor descriptor)
     {
         _dbName = dbName;
-        _fs = fs;
-        _definitor = definitor;
-        _pool = pool;
+        FsHelper = fsHelper;
+        Descriptor = descriptor;
+        Pool = pool;
     }
 }
