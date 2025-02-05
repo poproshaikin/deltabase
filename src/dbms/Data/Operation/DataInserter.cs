@@ -10,10 +10,10 @@ namespace Data.Operation;
 public class DataInserter : DataManipulator
 {
     internal DataInserter(string dbName,
-        FileSystemHelper fs,
+        FileSystemHelper fsHelper,
         FileStreamPool pool,
         DataDescriptor descriptor) : base(dbName,
-        fs,
+        fsHelper,
         pool,
         descriptor)
     {
@@ -55,7 +55,7 @@ public class DataInserter : DataManipulator
     {
         foreach (FileInfo page in pages)
         {
-            FileStream stream = _pool.GetOrOpen(page);
+            FileStream stream = Pool.GetOrOpen(page);
             BinaryDataIO io = new(stream);
             PageHeader header = await io.ReadHeaderAsync();
 
