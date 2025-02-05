@@ -9,35 +9,7 @@ namespace Enums;
 
 public static class EnumsStorage
 {
-    public const string RecordNullValue = "<null>";
-    
-    public static readonly Dictionary<string[], TokenType> TokensToTokenTypeMap =
-        new Dictionary<string[], TokenType>()
-        {
-            {
-                [ "SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "TABLE", "INTO", "SET", "FROM", "VALUES", "WHERE", "LIMIT" ],
-                TokenType.Keyword
-            },
-            {
-                [ "+", "-", "*", "/", "=", "==", "<", ">", "<=", ">=", "AND", "OR", "NOT" ], 
-                TokenType.Operator
-            },
-            {
-                [ " ", ",", ";", "(", ")" ], 
-                TokenType.Separator
-            },
-            {
-                [ "PK", "AI", "NN", "UN"],
-                TokenType.Constraint
-            },
-            {
-                [ "NULL", "INTEGER", "CHAR", "FLOAT", "STRING", "INTEGER[]", "CHAR[]", "FLOAT[]", "STRING[]" ],
-                TokenType.ValueType
-            }
-        };
-
-    public static readonly Dictionary<string, SeparatorType> SeparatorToTokenMap =
-        new Dictionary<string, SeparatorType>()
+    public static readonly Dictionary<string, SeparatorType> SeparatorToTokenMap = new()
         {
             { " ", SeparatorType.Whitespace },
             { ",", SeparatorType.Comma },
@@ -46,8 +18,7 @@ public static class EnumsStorage
             { ")", SeparatorType.RightParenthesis },
         };
 
-    public static readonly Dictionary<string, Keyword> KeywordToTokenMap =
-        new Dictionary<string, Keyword>()
+    public static readonly Dictionary<string, Keyword> KeywordToTokenMap = new()
         {
             { "SELECT", Keyword.Select },
             { "INSERT", Keyword.Insert },
@@ -64,8 +35,7 @@ public static class EnumsStorage
             { "LIMIT", Keyword.Limit },
         };
 
-    public static readonly Dictionary<string, OperatorType> OperatorToTokenMap =
-        new Dictionary<string, OperatorType>()
+    public static readonly Dictionary<string, OperatorType> OperatorToTokenMap = new()
         {
             { "*", OperatorType.Asterisk },
             { "=", OperatorType.Assign },
@@ -80,24 +50,7 @@ public static class EnumsStorage
             { "NOT", OperatorType.Not },
         };
 
-    public static readonly Dictionary<string, SqlValueType> ValueTypesToTokenMap =
-        new Dictionary<string, SqlValueType>()
-        {
-            { "NULL", SqlValueType.Null },
-
-            { "INTEGER", SqlValueType.Integer },
-            { "STRING", SqlValueType.String },
-            { "CHAR", SqlValueType.Char },
-            { "FLOAT", SqlValueType.Float },
-
-            { "INTEGER[]", SqlValueType.IntegerArr },
-            { "STRING[]", SqlValueType.StringArr },
-            { "CHAR[]", SqlValueType.CharArr },
-            { "FLOAT[]", SqlValueType.FloatArr },
-        };
-
-    public static readonly Dictionary<string, ColumnConstraint> ColumnConstraintToTokenMap =
-        new Dictionary<string, ColumnConstraint>()
+    public static readonly Dictionary<string, ColumnConstraint> ColumnConstraintToTokenMap = new()
         {
             { "PK", ColumnConstraint.Pk },
             { "AI", ColumnConstraint.Ai },
@@ -105,46 +58,32 @@ public static class EnumsStorage
             { "UN", ColumnConstraint.Un },
         };
 
-    public static readonly Dictionary<string, FileType> ExtensionToStringMap =
-        new Dictionary<string, FileType>()
+    public static readonly Dictionary<string, FileType> ExtensionToStringMap = new()
         {
             { "def", FileType.Def },
             { "conf", FileType.Conf },
             { "record", FileType.Record },
         };
 
-    public static readonly Dictionary<string, RequestType> CommandToStringMap =
-        new Dictionary<string, RequestType>()
-        {
-            { "sql", RequestType.sql },
-            { "connect", RequestType.connect },
-            { "close", RequestType.close },
-            { "test", RequestType.test },
-            { "createdatabase", RequestType.createdatabase },
-        };
-
-    public static readonly Dictionary<string, QueryExecutingOption> ExecutingOptionToStringMap =
-        new Dictionary<string, QueryExecutingOption>()
-        {
-            { "non_query", QueryExecutingOption.NonQuery },
-            { "scalar", QueryExecutingOption.Scalar },
-            { "reader", QueryExecutingOption.Reader }
-        };
-    
-    public static SqlValueType GetColumnValueType(string lexeme)
+    public static readonly Dictionary<string, RequestType> CommandToStringMap = new()
     {
-        return ValueTypesToTokenMap[lexeme];
-    }
+        { "sql", RequestType.sql },
+        { "connect", RequestType.connect },
+        { "close", RequestType.close },
+        { "test", RequestType.test },
+        { "createdatabase", RequestType.createdatabase },
+    };
+    
+    public static readonly Dictionary<string, TokenType> TokensToTokenTypeMap =
+        KeywordToTokenMap.Keys.ToDictionary(k => k, _ => TokenType.Keyword)
+            .Concat(OperatorToTokenMap.Keys.ToDictionary(k => k, _ => TokenType.Operator))
+            .Concat(SeparatorToTokenMap.Keys.ToDictionary(k => k, _ => TokenType.Separator))
+            .Concat(ColumnConstraintToTokenMap.Keys.ToDictionary(k => k, _ => TokenType.Constraint))
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
     public static TokenType GetTokenType(string lexeme)
     {
-        string[]? foundLexemes = TokensToTokenTypeMap.Keys.FirstOrDefault(s => s.Contains(lexeme));
-
-        return foundLexemes switch
-        {
-            null => default,
-            not null => TokensToTokenTypeMap[foundLexemes],
-        };
+        return TokensToTokenTypeMap[lexeme];
     }
 
     public static ColumnConstraint GetConstraint(string lexeme)
@@ -196,20 +135,9 @@ public static class EnumsStorage
         return ExtensionToStringMap.FirstOrDefault(kvp => kvp.Value == type).Key ??
                throw new ArgumentOutOfRangeException(nameof(type), type, null);
     }
-
-    public static QueryExecutingOption GetExecutingOption(string executingOption)
-    {
-        return ExecutingOptionToStringMap[executingOption];
-    }
     
     public static RequestType GetCommandType(string command)
     {
         return CommandToStringMap[command];
-    }
-
-    public static bool ContainsLexeme(string lexeme)
-    {
-        return TokensToTokenTypeMap.Any(kvp =>
-            kvp.Key.Any(token => token == lexeme));
     }
 }
