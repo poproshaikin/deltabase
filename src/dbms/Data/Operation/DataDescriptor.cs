@@ -5,13 +5,13 @@ using Utils;
 
 namespace Data.Operation;
 
-public class DataDefinitor
+public class DataDescriptor
 {
     private List<TableScheme> _tableSchemes;
     private string _dbName;
     private FileSystemHelper _fs;
     
-    public DataDefinitor(string dbName, FileSystemHelper fs)
+    public DataDescriptor(string dbName, FileSystemHelper fs)
     {
         _tableSchemes = [];
         _dbName = dbName;
