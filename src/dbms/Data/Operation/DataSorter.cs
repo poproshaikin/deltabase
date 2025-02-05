@@ -9,12 +9,12 @@ namespace Data.Operation;
 public class DataSorter : DataManipulator
 {
     internal DataSorter(string dbName,
-        FileSystemHelper fs,
+        FileSystemHelper fsHelper,
         FileStreamPool pool,
-        DataDefinitor definitor) : base(dbName,
-        fs,
+        DataDescriptor descriptor) : base(dbName,
+        fsHelper,
         pool,
-        definitor)
+        descriptor)
     {
     }
     
@@ -60,7 +60,7 @@ public class DataSorter : DataManipulator
                 : throw new DbEngineException($"Column '{d}' not found in the scheme."))
             .ToArray();
         
-        string[] filteredAndSortedValues = selectedColumnsIds
+        string?[] filteredAndSortedValues = selectedColumnsIds
             .Select(id => passedValues[id])
             .ToArray();
 
