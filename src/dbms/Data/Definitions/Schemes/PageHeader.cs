@@ -7,7 +7,9 @@ public struct PageHeader
     public int[] FreeRows { get; set; }
     
     internal FileInfo? File { get; set; }
-    
+
+    public ulong? Size => (ulong)File?.Length!;
+
     internal PageHeader(int pageId, int rowsCount, int[] freeRows)
     {
         PageId = pageId;
