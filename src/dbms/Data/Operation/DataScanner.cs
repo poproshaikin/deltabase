@@ -10,12 +10,12 @@ namespace Data.Operation;
 public class DataScanner : DataManipulator
 {
     internal DataScanner(string dbName,
-        FileSystemHelper fs,
+        FileSystemHelper fsHelper,
         FileStreamPool pool,
-        DataDefinitor definitor) : base(dbName,
-        fs,
+        DataDescriptor descriptor) : base(dbName,
+        fsHelper,
         pool,
-        definitor)
+        descriptor)
     {
     }
 
@@ -49,7 +49,7 @@ public class DataScanner : DataManipulator
         int? rowsLimit,
         ConditionGroup? conditionGroup)
     {
-        string tablePath = _fs.GetRecordFolderPath(_dbName, tableScheme.TableName);
+        string tablePath = FsHelper.GetRecordFolderPath(_dbName, tableScheme.TableName);
 
         DirectoryInfo tableDir = new(tablePath);
         var allPages = tableDir.GetFiles("*.record")
@@ -78,7 +78,7 @@ public class DataScanner : DataManipulator
 
         foreach (FileInfo pageInfo in allPages)
         {
-            FileStream stream = _pool.GetOrOpen(pageInfo);
+            FileStream stream = Pool.GetOrOpen(pageInfo);
             BinaryDataIO io = new(stream);
             PageHeader header = await io.ReadHeaderAsync();
 
@@ -102,8 +102,9 @@ public class DataScanner : DataManipulator
 
     private async Task<PageRow[]> ReadPageAsync(TableScheme tableScheme, PageReadingPlan plan)
     {
-        FileStream stream = _pool.GetOrOpen(plan.PageToRead);
+        FileStream stream = Pool.GetOrOpen(plan.PageToRead);
         BinaryDataIO io = new(stream);
+        DataSorter sorter = new(_dbName, FsHelper, Pool, Descriptor);
 
         List<PageRow> listToLoad = [];
         ConditionChecker checker = new(tableScheme, plan.ConditionGroup!);
@@ -114,9 +115,10 @@ public class DataScanner : DataManipulator
             plan.IsHeaderRead = true;
         }
 
-        while (await io.ReadRowAsync(_cachedScheme!) is { } readPageRow)
+        while (await io.ReadRowAsync(_cachedScheme!) is var readPageRow)
         {
-            if (plan.PassedColumns is not null) readPageRow.Data = FilterAndSort(tableScheme, plan.PassedColumns, readPageRow);
+            if (plan.PassedColumns is not null && sorter.NeedsSort(tableScheme, plan.PassedColumns))
+                readPageRow.Data = sorter.Sort(tableScheme, plan.PassedColumns, readPageRow.Data);
 
             if (plan.RowsToReadCount is not null && listToLoad.Count >= plan.RowsToReadCount) break;
 
@@ -128,19 +130,6 @@ public class DataScanner : DataManipulator
         }
 
         return listToLoad.ToArray();
-    }
-
-    private object[] FilterAndSort(TableScheme tableScheme, string[] passedColumns, PageRow readPageRow)
-    {
-        var selectedColumnsIds = passedColumns
-            .Select(d => Array.IndexOf(tableScheme.Columns.Select(c => c.Name).ToArray(), d))
-            .ToArray(); // gets an id of each selected column
-        var filteredAndSortedValues = new object[selectedColumnsIds.Length];
-
-        for (var i = 0; i < selectedColumnsIds.Length; i++)
-            filteredAndSortedValues[i] = readPageRow.Data[selectedColumnsIds[i]];
-
-        return filteredAndSortedValues;
     }
 
     private async Task<PageRow[]> SortManyPagesData(IEnumerable<Task<PageRow[]>> readingTasks)
