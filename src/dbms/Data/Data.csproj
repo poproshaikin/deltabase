@@ -10,6 +10,7 @@
         <IntermediateOutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)obj/dbms/Release/Data</IntermediateOutputPath>
         <BaseIntermediateOutputPath Condition="'$(Configuration)' == 'Debug'">$(SolutionDir)obj/dbms/Debug/Data</BaseIntermediateOutputPath>
         <BaseIntermediateOutputPath Condition="'$(Configuration)' == 'Release'">$(SolutionDir)obj/dbms/Release/Data</BaseIntermediateOutputPath>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <AssemblyName>data_lib</AssemblyName>
     </PropertyGroup>
 
