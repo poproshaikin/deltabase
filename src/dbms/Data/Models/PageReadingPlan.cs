@@ -1,6 +1,7 @@
+using Data.Definitions.Schemes;
 using Sql.Shared.Expressions;
 
-namespace Data.Definitions.Schemes;
+namespace Data.Models;
 
 internal struct PageReadingPlan
 {
@@ -13,7 +14,7 @@ internal struct PageReadingPlan
     internal string[]? PassedColumns { get; set; }
     
     internal ConditionGroup? ConditionGroup { get; set; }
-    
+
     internal bool IsHeaderRead { get; set; }
 
     internal PageReadingPlan(FileInfo pageToRead, TableScheme scheme, int? rowsToReadCount, string[]? passedColumns,

@@ -20,7 +20,7 @@ public class QueryExecutor
     {
         _dbName = dbName;
         _fs = fs;
-        _provider = new DataServiceProvider(dbName, fs, FileAccess.Read);
+        _provider = new DataServiceProvider(dbName, fs);
     }
 
     /// <summary>

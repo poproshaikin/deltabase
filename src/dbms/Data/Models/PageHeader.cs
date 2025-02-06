@@ -1,4 +1,4 @@
-namespace Data.Definitions.Schemes;
+namespace Data.Models;
 
 public struct PageHeader
 {
@@ -10,7 +10,7 @@ public struct PageHeader
 
     public ulong? Size => (ulong)File?.Length!;
 
-    internal PageHeader(int pageId, int rowsCount, int[] freeRows)
+    public PageHeader(int pageId, int rowsCount, int[] freeRows)
     {
         PageId = pageId;
         RowsCount = rowsCount;
