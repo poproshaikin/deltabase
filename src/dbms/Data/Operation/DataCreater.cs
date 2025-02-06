@@ -7,12 +7,12 @@ namespace Data.Operation;
 public class DataCreater : DataManipulator
 {
     internal DataCreater(string dbName,
-        FileSystemHelper fs,
+        FileSystemHelper fsHelper,
         FileStreamPool pool,
-        DataDefinitor definitor) : base(dbName,
-        fs,
+        DataDescriptor descriptor) : base(dbName,
+        fsHelper,
         pool,
-        definitor)
+        descriptor)
     {
     }
     

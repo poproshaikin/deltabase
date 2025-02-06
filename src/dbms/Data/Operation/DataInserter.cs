@@ -1,4 +1,3 @@
-using Data.Definitions;
 using Data.Definitions.Schemes;
 using Data.Models;
 using Data.Operation.IO;
@@ -44,40 +43,45 @@ public class DataInserter : DataManipulator
         var formatter = new BinaryDataFormatter();
         ulong size = formatter.EstimateSize(scheme, finalDataSet);
         
-        var context = await PrepareToRowInsertionAsync(pages, size);
-        if (context is null)
+        RowInsertionContext? context = await PrepareInsertionAsync(pages, size);
+        if (!context.HasValue)
             return RowInsertionResult.FailedToSelectInsertionFile;
         
-        await ProcessInsertionAsync(context, );
+        return await ProcessInsertionAsync(context.Value, finalDataSet);
     }
 
-    private async Task<RowInsertionContext?> PrepareToRowInsertionAsync(FileInfo[] pages, ulong size)
+    private async Task<RowInsertionContext?> PrepareInsertionAsync(FileInfo[] pages, ulong size)
     {
-        foreach (FileInfo page in pages)
+        foreach (var page in pages)
         {
             FileStream stream = Pool.GetOrOpen(page);
             BinaryDataIO io = new(stream);
             PageHeader header = await io.ReadHeaderAsync();
-
-            if (header.FreeRows.Length != 0)
-            {
-                int rowId = header.FreeRows[0];
-                await io.SeekToRowAsync(rowId, _cachedScheme!, true);
-                return new RowInsertionContext(header, page, stream, RowInsertionOption.Inserting, rowId);
-            }
-
-            if (header.Size + size <= MAXIMUM_PAGE_SIZE)
+            
+            // // if page hasn't enough place for new row
+            if (header.Size + size > MAXIMUM_PAGE_SIZE) 
+                continue;
+            
+            if (header.FreeRows.Length == 0)
             {
                 int rowsCount = header.RowsCount;
                 io.SeekToEnd();
                 return new RowInsertionContext(header, page, stream, RowInsertionOption.Appending, newRowId: rowsCount);
             }
-            
-            ...
+            else
+            {
+                int rowId = header.FreeRows[0];
+                await io.SeekToRowAsync(rowId, _cachedScheme!, true);
+                return new RowInsertionContext(header, page, stream, RowInsertionOption.Inserting, rowId);
+            }
         }
+        
+        // создать класс по типу PageHandler,
+        // через который будут проходить операции ввода/вывода
+        // и заодно управление страницей
     }
 
-    private async Task ProcessInsertionAsync(RowInsertionContext context, string[] data)
+    private async Task<RowInsertionResult> ProcessInsertionAsync(RowInsertionContext context, string[] data)
     {
         
     }

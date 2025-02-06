@@ -16,13 +16,16 @@ public class BinaryDataIO
 
     private const char new_line_marker = '\n';
     
-    private readonly FileStream _stream;
+    protected readonly FileStream _stream;
 
-    private TableScheme? _scheme;
+    protected readonly TableScheme? _scheme;
+    
+    protected readonly BinaryDataFormatter Formatter;
 
     public BinaryDataIO(FileStream stream)
     {
         _stream = stream;
+        Formatter = new BinaryDataFormatter();
     }
     
     public BinaryDataIO(FileStream stream, TableScheme scheme) : this(stream)
@@ -30,220 +33,137 @@ public class BinaryDataIO
         _scheme = scheme;
     }
 
-    public async Task<PageHeader> ReadHeaderAsync()
-    {
-        int pageId = await ReadIntAsync();
-        int rowsCount = await ReadIntAsync();
-        int[] freeRows = await ReadFreeRowsAsync();
-        
-        return new PageHeader(pageId, rowsCount, freeRows, new FileInfo(_stream.Name));
-    }
-
-    public async Task WriteHeader(PageHeader header)
-    {
-        int pageId = header.PageId;
-        int rowsCount = header.RowsCount;
-        int[] freeRows = header.FreeRows;
-
-        await WriteIntAsync(pageId);
-        await WriteIntAsync(rowsCount);
-        await WriteFreeRowsAsync(freeRows);
-    }
-
-    public async Task SkipHeaderAsync()
-    {
-        for (int i = 0; i < header_lines; i++)
-        {
-            await SkipRowAsync();
-        }
-    }
-
-    public async Task<PageRow> ReadRowAsync()
-    {
-        return await ReadRowAsync(_scheme ?? throw new DbEngineException(ErrorType.InternalServerError));
-    }
-    
     public async Task<PageRow> ReadRowAsync(TableScheme scheme)
     {
-        int valuesCount = await ReadIntAsync();
+        int rowLength = await ReadIntAsync();
         int rid = await ReadIntAsync();
-        
-        object[] values = new object[valuesCount];
-        for (int i = 0; i < valuesCount; i++)
+
+        bool[] nullBitmap = ReadNullBitmap();
+
+        var values = new string?[scheme.Columns.Length];
+        for (int i = 0; i < values.Length; i++)
         {
-            values[i] = scheme.Columns[i].ValueType switch
+            if (nullBitmap[i] is true)
             {
-                SqlValueType.Integer => await ReadIntAsync(),
-                SqlValueType.String => await ReadStringAsync(),
-                SqlValueType.Char => await ReadCharAsync(),
-                SqlValueType.Float => await ReadFloatAsync(),
-                
-                //TODO доделать остальные типы
-                _ => throw new NotImplementedException(),
-            };
+                values[i] = null;
+                continue;
+            }
+            
+            SqlValueType valueType = scheme.Columns[i].ValueType;
+
+            object value;
+            
+            if (valueType == SqlValueType.Integer)
+                value = await ReadIntAsync();
+
+            else if (valueType == SqlValueType.String)
+                value = await ReadStringAsync();
+
+            else if (valueType == SqlValueType.Char)
+                value = await ReadCharAsync();
+
+            else if (valueType == SqlValueType.Float)
+                value = await ReadFloatAsync();
+
+            else if (valueType == SqlValueType.Boolean)
+                value = await ReadBooleanAsync();
+
+            else
+                throw new NotImplementedException();
+
+            values[i] = value.ToString();
         }
 
-        return new PageRow(rid, values.ToArray());
+        return new PageRow(rid, values);
+
+        bool[] ReadNullBitmap()
+        {
+            var bitmap = new bool[scheme.Columns.Length];
+            for (int i = 0; i < bitmap.Length; i++)
+            {
+                bitmap[i] = ReadByte() is 1;
+            }
+            return bitmap;
+        }
     }
 
     public async Task WriteRowAsync(PageRow row)
     {
-        await WriteRowAsync(row, _scheme ?? throw new DbEngineException(ErrorType.InternalServerError));
+        
     }
     
-    public async Task WriteRowAsync(PageRow row, TableScheme scheme)
+    public async Task InsertRowAsync(PageRow row)
     {
-        int valuesCount = row.ValuesCount;
-        await WriteIntAsync(valuesCount);
-        await WriteIntAsync(row.RId);
-        
-        for (int i = 0; i < valuesCount; i++)
-        {
-            switch (scheme.Columns[i].ValueType)
-            {
-                case SqlValueType.Integer: await WriteIntAsync((int)row[i]); break;
-                case SqlValueType.String: await WriteStringAsync((string)row[i]); break;
-                case SqlValueType.Char: await WriteCharAsync((char)row[i]); break;
-                case SqlValueType.Float: await WriteFloatAsync((float)row[i]); break;
-                
-                // TODO доделать остальные типы
-                case SqlValueType.Null:
-                case SqlValueType.IntegerArr:
-                case SqlValueType.StringArr:
-                case SqlValueType.CharArr:
-                case SqlValueType.FloatArr:
-                case SqlValueType.Blob:
-                default: throw new NotImplementedException(); break;
-            }
-        }
+        throw new NotImplementedException();
     }
     
-    public async Task SkipRowAsync()
+    public async Task<PageHeader> ReadHeaderAsync()
     {
-        int blocksCount = await ReadIntAsync();
-
-        for (int i = 0; i < blocksCount; i++)
-        {
-            await SkipBlockAsync();
-        }
-    }
-
-    public async Task<int[]> ReadFreeRowsAsync()
-    {
-        int freeRowsCount = await ReadIntAsync();
-        int[] freeRows = new int[freeRowsCount];
+        int pageId = await ReadIntAsync();
+        int rowsCount = await ReadIntAsync();
+        int[] freeRows = await ReadArrayAsync(ReadIntAsync);
         
-        for (int i = 0; i < freeRowsCount; i++)
-        {
-            freeRows[i] = await ReadIntAsync();
-        }
-
-        return freeRows;
+        return new PageHeader(pageId, rowsCount, freeRows, new FileInfo(_stream.Name));
     }
 
-    public async Task WriteFreeRowsAsync(int[] freeRows)
+    public async Task<T[]> ReadArrayAsync<T>(Func<Task<T>> readingFunction) where T : unmanaged
     {
-        int freeRowsCount = freeRows.Length;
-        await WriteIntAsync(freeRowsCount);
-
-        for (int i = 0; i < freeRowsCount; i++)
+        int elementsCount = await ReadIntAsync();
+        
+        if (elementsCount == 0) return [];
+        if (elementsCount == 1) return [await readingFunction()];
+        
+        T[] result = new T[elementsCount];
+        for (int i = 0; i < elementsCount; i++)
         {
-            byte[] pointerBuffer = BitConverter.GetBytes(freeRows[i]);
-            await _stream.WriteAsync(pointerBuffer, 0, sizeof(short));
-            await _stream.FlushAsync();
+            result[i] = await readingFunction();
         }
+        
+        return result;
+    }
+
+    public byte ReadByte()
+    {
+        return (byte)_stream.ReadByte();
     }
     
     public async Task<int> ReadIntAsync()
     {
-        byte[] buffer = new byte[sizeof(int)];
-        int read = await _stream.ReadAsync(buffer, 0, sizeof(int));
-
-        if (read != sizeof(int))
-            throw new NotImplementedException();
-            
-        return BitConverter.ToInt32(buffer, 0);
-    }
-    
-    public async Task WriteIntAsync(int value)
-    {
-        byte[] buffer = BitConverter.GetBytes(value);
-        
-        await _stream.WriteAsync(buffer, 0, sizeof(int));
-        await _stream.FlushAsync();
+        byte[] buffer = await ReadBytesAsync(sizeof(int));
+        return Formatter.DeserializeAsInt(buffer);
     }
 
     public async Task<float> ReadFloatAsync()
     {
-        byte[] buffer = new byte[sizeof(float)];
-        _ = await _stream.ReadAsync(buffer, 0, sizeof(float));
-        return BitConverter.ToSingle(buffer);
-    }
-
-    public async Task WriteFloatAsync(float value)
-    {
-        byte[] buffer = BitConverter.GetBytes(value);
-        
-        await _stream.WriteAsync(buffer, 0, sizeof(float));
-        await _stream.FlushAsync();
+        byte[] buffer = await ReadBytesAsync(sizeof(float));
+        return Formatter.DeserializeAsFloat(buffer);
     }
     
     public async Task<string> ReadStringAsync()
     {
         int length = await ReadIntAsync();
-        byte[] buffer = new byte[length];
-        _ = await _stream.ReadAsync(buffer, 0, length);
-        return ConvertHelper.GetString(buffer);
-    }
-    
-    public async Task WriteStringAsync(string value)
-    {
-        byte[] buffer = ConvertHelper.GetBytes(value);
-        await WriteBlockAsync(buffer);
+        byte[] buffer = await ReadBytesAsync(length);
+        return Formatter.DeserializeAsString(buffer);
     }
 
     public async Task<char> ReadCharAsync()
     {
-        byte[] buffer = await ReadBlockAsync();
-        return Encoding.UTF8.GetChars(buffer)[0];
+        int length = await ReadIntAsync();
+        byte[] buffer = await ReadBytesAsync(length);
+        return Formatter.DeserializeAsChar(buffer);
     }
 
-    public async Task WriteCharAsync(char value)
+    public async Task<bool> ReadBooleanAsync()
     {
-        byte[] buffer = Encoding.UTF8.GetBytes([value]);
-        await WriteBlockAsync(buffer);
-    }
-    
-    public async Task<byte[]> ReadBlockAsync()
-    {
-        int valueLength = await ReadIntAsync();
-        byte[] buffer = new byte[valueLength];
-
-        _ = _stream.ReadAsync(buffer, 0, valueLength);
-
-        return buffer;
+        byte[] buffer = await ReadBytesAsync(sizeof(bool));
+        return BitConverter.ToBoolean(buffer, 0);
     }
     
-    public async Task WriteBlockAsync(byte[] data)
+    public async Task<byte[]> ReadBytesAsync(int count)
     {
-        int valueLength = data.Length;
-        byte[] lengthBytes = BitConverter.GetBytes(valueLength);
-        data = lengthBytes.Concat(data).ToArray();
-        
-        await _stream.WriteAsync(data, 0, data.Length);
-        await _stream.FlushAsync();
-    }
-
-    public async Task<byte> ReadByteAsync()
-    {
-        byte[] buffer = new byte[sizeof(byte)];
-        _ = await _stream.ReadAsync(buffer, 0, sizeof(byte));
-        return buffer[0];
-    }
-
-    public async Task WriteByteAsync(byte value)
-    {
-        await _stream.WriteAsync([value], 0, 1);
+        byte[] result = new byte[count];
+        await _stream.ReadExactlyAsync(result, 0, count);
+        return result;
     }
 
     public void SkipBytes(int count)
@@ -257,38 +177,31 @@ public class BinaryDataIO
         _stream.Seek(blockLength, SeekOrigin.Current);
     }
 
-    public async Task WriteRowStartAsync(int columnsCount)
+    public async Task SkipArrayAsync(int? elementSize)
     {
-        byte[] countBytes = BitConverter.GetBytes(columnsCount);
-        
-        await _stream.WriteAsync(countBytes, 0, sizeof(int));
-        await _stream.FlushAsync();
-    }  
-    
-    public async Task SeekToRowAsync(int emptyRowId)
-    {
-        await SeekToRowAsync(emptyRowId, _scheme ?? throw new DbEngineException(ErrorType.InternalServerError));
-    }
+        int elementsCount = await ReadIntAsync();
 
-    public async Task SeekToRowAsync(int emptyRowId, TableScheme scheme)
-    {
-        int rid;
-        do
+        if (elementSize is not null)
         {
-            rid = await ReadIntAsync();
-
-            if (rid == emptyRowId)
+            for (int i = 0; i < elementsCount; i++)
             {
-                break;
+                SkipBytes(elementSize.Value);
             }
-
-            ColumnScheme[] columns = scheme.Columns;
-
-            for (int i = 0; i < columns.Length; i++)
+        }
+        else
+        {
+            for (int i = 0; i < elementsCount; i++)
             {
-                await SkipColumnAsync(columnId: i, scheme);
+                await SkipBlockAsync();
             }
-        } while (rid != emptyRowId);
+        }
+    }
+    
+    public async Task SkipHeaderAsync()
+    {
+        SkipBytes(sizeof(int));
+        SkipBytes(sizeof(int));
+        await SkipArrayAsync(sizeof(int));
     }
 
     public async Task SkipColumnAsync(int columnId)
@@ -300,10 +213,10 @@ public class BinaryDataIO
     {
         SqlValueType valueType = scheme.Columns[columnId].ValueType;
         
-        if (IsFixedLengthType(valueType))
+        if (valueType.IsFixedSize)
         {
-            int length = GetTypeWeight(valueType);
-            SkipBytes(length);
+            int length = valueType.Size!.Value;
+            Seek(length);
         }
         else
         {
@@ -311,83 +224,42 @@ public class BinaryDataIO
         }
     }
 
-    public bool IsFixedLengthType(SqlValueType type)
+    public void Seek(int count, SeekOrigin seekOrigin = SeekOrigin.Current)
     {
-        return type switch
-        {
-            SqlValueType.Integer => true,
-            SqlValueType.Float => true,
-            SqlValueType.Char => true,
-
-            _ => false
-        };
+        _stream.Seek(count, seekOrigin);
     }
     
-    /// <returns> -1 if weight is variable, otherwise, weight of a type</returns>
-    public int GetTypeWeight(SqlValueType valueType)
+    public async Task SeekToRowAsync(int rowId, bool headerRead)
     {
-        return valueType switch
-        {
-            SqlValueType.Integer => sizeof(int),
-            SqlValueType.Float => sizeof(float),
-            SqlValueType.Char => sizeof(char),
-
-            _ => -1,
-        };
+        await SeekToRowAsync(rowId, _scheme ?? throw new DbEngineException(ErrorType.InternalServerError), headerRead);
     }
 
-    public byte[] GetBytes(object value)
+    public async Task SeekToRowAsync(int rowId, TableScheme scheme, bool headerRead)
     {
-        if (value is int @int)
-        {
-            return BitConverter.GetBytes(@int);
-        }
-
-        if (value is float @float)
-        {
-            return BitConverter.GetBytes(@float);
-        }
-
-        if (value is double @double)
-        {
-            return BitConverter.GetBytes(@double);
-        }
-
-        if (value is char @char)
-        {
-            return BitConverter.GetBytes(@char);
-        }
-
-        if (value is bool @bool)
-        {
-            return BitConverter.GetBytes(@bool);
-        }
-
-        if (value is string @string)
-        {
-            return Encoding.UTF8.GetBytes(@string);
-        }
-
-        if (value is int[] intArray)
-        {
-            return intArray.Aggregate<int, byte[]>([], (sum, current) => sum.Concat(BitConverter.GetBytes(current)).ToArray());
-        }
-
-        if (value is float[] floatArray)
-        {
-            return floatArray.Aggregate<float, byte[]>([], (sum, current) => sum.Concat(BitConverter.GetBytes(current)).ToArray());
-        }
-
-        if (value is double[] doubleArray)
-        {
-            return doubleArray.Aggregate<double, byte[]>([], (sum, current) => sum.Concat(BitConverter.GetBytes(current)).ToArray());
-        }
+        if (!headerRead)
+            await SkipHeaderAsync();
         
-        if (value is string[] stringArray)
+        int rid;
+        do
         {
-            return stringArray.Aggregate<string, byte[]>([], (sum, current) => sum.Concat(Encoding.UTF8.GetBytes(current)).ToArray());
-        }
+            rid = await ReadIntAsync();
 
-        throw new NotImplementedException();
+            if (rid == rowId)
+            {
+                break;
+            }
+
+            ColumnScheme[] columns = scheme.Columns;
+
+            for (int i = 0; i < columns.Length; i++)
+            {
+                await SkipColumnAsync(columnId: i, scheme);
+            }
+        } while (rid != rowId);
+    }
+
+    public void SeekToEnd()
+    {
+        _stream.Seek(0, SeekOrigin.End);
     }
 }

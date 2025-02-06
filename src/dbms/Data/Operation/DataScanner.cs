@@ -136,7 +136,8 @@ public class DataScanner : DataManipulator
     {
         List<PageRow> sorted = [];
 
-        foreach (var readingTask in readingTasks) sorted.AddRange(await readingTask);
+        foreach (var readingTask in readingTasks) 
+            sorted.AddRange(await readingTask);
 
         return sorted.ToArray();
     }
