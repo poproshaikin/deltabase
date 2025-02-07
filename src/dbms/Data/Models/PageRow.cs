@@ -6,13 +6,13 @@ public struct PageRow
 {
     internal uint RId { get; }
     
-    public string[] Data { get; set; }
+    public string?[] Data { get; set; }
     
     internal uint ValuesCount => (uint)Data.Length; 
     
-    public string this[int index] => Data[index];
+    public string? this[int index] => Data[index];
 
-    public PageRow(int rid, string[] data)
+    public PageRow(int rid, string?[] data)
     {
         RId = (uint)rid;
         Data = data;
