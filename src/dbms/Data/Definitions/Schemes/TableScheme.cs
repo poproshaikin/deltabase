@@ -19,7 +19,7 @@ public class TableScheme
     
     public bool HasColumn(string columnName)
     {
-        return GetColumn(columnName) is not null;
+        return Columns.Any(c => c.Name == columnName);
     }
 
     public ColumnScheme? GetColumn(string columnName)
