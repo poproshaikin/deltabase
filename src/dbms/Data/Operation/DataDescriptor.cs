@@ -5,6 +5,7 @@ using Utils;
 
 namespace Data.Operation;
 
+// TODO просто привести в порядок, отрефакторить что бы прилично выглядело
 public class DataDescriptor
 {
     private List<TableScheme> _tableSchemes;
