@@ -1,6 +1,5 @@
 using Data.Definitions;
 using Data.Definitions.Schemes;
-using Data.Operation.IO;
 using Exceptions;
 using Utils;
 
@@ -60,7 +59,7 @@ public class DataSorter : DataManipulator
                 : throw new DbEngineException($"Column '{d}' not found in the scheme."))
             .ToArray();
         
-        string?[] filteredAndSortedValues = selectedColumnsIds
+        string[] filteredAndSortedValues = selectedColumnsIds
             .Select(id => passedValues[id])
             .ToArray();
 
