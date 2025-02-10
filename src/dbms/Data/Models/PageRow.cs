@@ -2,11 +2,11 @@ using Enums.Records.Columns;
 
 namespace Data.Models;
 
-public struct PageRow
+public readonly struct PageRow
 {
     internal uint RId { get; }
     
-    public string?[] Data { get; set; }
+    public string?[] Data { get; }
     
     internal uint ValuesCount => (uint)Data.Length; 
     
